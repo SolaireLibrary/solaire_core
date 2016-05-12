@@ -1,3 +1,6 @@
+#ifndef SOLAIRE_CORE_HPP
+#define SOLAIRE_CORE_HPP
+
 //Copyright 2016 Adam G. Smith
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +15,11 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#ifndef SOLAIRE_CORE_HPP
-#define SOLAIRE_CORE_HPP
-
 #include <cstdint>
 
 // Define constants
+	#define SOLAIRE_CORE
+
 	#define SOLAIRE_ERROR 				0
 
 	#define SOLAIRE_WINDOWS				1
@@ -204,55 +206,53 @@ namespace solaire {
 	using member_data_ptr = T CLASS::*;
 }
 
-    #define force_inline SOLAIRE_FORCE_INLINE
-
     #if SOLAIRE_CPP_VER >= SOLAIRE_CPP_11
-        #define constexpr_11 constexpr
-        #define constexpr_i_11 constexpr
-        #define constexpr_c_11 constexpr
+        #define SOLAIRE_CONSTEXPR_11 constexpr
+        #define SOLAIRE_CONSTEXPR_I11 constexpr
+        #define SOLAIRE_CONSTEXPR_C11 constexpr
     #else
-        #define constexpr_11
-        #define constexpr_i_11 inline
-        #define constexpr_c_11 static const
+        #define SOLAIRE_CONSTEXPR_11
+        #define SOLAIRE_CONSTEXPR_I11 inline
+        #define SOLAIRE_CONSTEXPR_C11 static const
     #endif
 
     #if SOLAIRE_CPP_VER >= SOLAIRE_CPP_14
-        #define constexpr_14 constexpr
-        #define constexpr_i_14 constexpr
-        #define constexpr_c_14 constexpr
+        #define SOLAIRE_CONSTEXPR_14 constexpr
+        #define SOLAIRE_CONSTEXPR_I14 constexpr
+        #define SOLAIRE_CONSTEXPR_C14 constexpr
     #else
-        #define constexpr_14
-        #define constexpr_i_14 inline
-        #define constexpr_c_14 static const
+        #define SOLAIRE_CONSTEXPR_14
+        #define SOLAIRE_CONSTEXPR_I14 inline
+        #define SOLAIRE_CONSTEXPR_C14 static const
     #endif
 
     #if SOLAIRE_CPP_VER >= SOLAIRE_CPP_17
-        #define constexpr_17 constexpr
-        #define constexpr_i_17 constexpr
-        #define constexpr_c_17 constexpr
+        #define SOLAIRE_CONSTEXPR_17 constexpr
+        #define SOLAIRE_CONSTEXPR_I17 constexpr
+        #define SOLAIRE_CONSTEXPR_C17 constexpr
     #else
-        #define constexpr_17
-        #define constexpr_i_17 inline
-        #define constexpr_c_17 static const
+        #define SOLAIRE_CONSTEXPR_17
+        #define SOLAIRE_CONSTEXPR_I17 inline
+        #define SOLAIRE_CONSTEXPR_C17 static const
     #endif
 
 
-	#define export_class class
-	#define export_interface class
+	#define SOLAIRE_EXPORT_CLASS class
+	#define SOLAIRE_EXPORT_INTERFACE class
 
-	#ifndef export_call
+	#ifndef SOLAIRE_EXPORT_CALL
 		#if SOLAIRE_INSTRUCTION_SET == SOLAIRE_X86 || SOLAIRE_INSTRUCTION_SET == SOLAIRE_X64
-			#define export_call __cdecl
+			#define SOLAIRE_EXPORT_CALL __cdecl
 		#else
-			#define export_call
+			#define SOLAIRE_EXPORT_CALL
 		#endif
 	#endif
 
-	#ifndef interface_call
+	#ifndef SOLAIRE_INERFACE_CALL
 		#if SOLAIRE_INSTRUCTION_SET == SOLAIRE_X86 || SOLAIRE_INSTRUCTION_SET == SOLAIRE_X64
-			#define interface_call __stdcall
+			#define SOLAIRE_INERFACE_CALL __stdcall
 		#else
-			#define interface_call
+			#define SOLAIRE_INERFACE_CALL
 		#endif
 	#endif
 
