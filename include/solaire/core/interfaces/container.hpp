@@ -21,7 +21,7 @@ namespace solaire {  namespace interfaces {
 	template<class T>
 	SOLAIRE_EXPORT_INTERFACE container {
     public:
-        typedef T Type;
+        typedef T type;
     public:
 		virtual SOLAIRE_INTERFACE_CALL ~container() throw(){}
 		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
