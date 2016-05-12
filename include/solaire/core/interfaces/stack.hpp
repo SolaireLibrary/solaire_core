@@ -21,10 +21,10 @@ namespace solaire { namespace interfaces {
 	template<class T>
 	SOLAIRE_EXPORT_INTERFACE stack : public container<T> {
     public:
-		virtual SOLAIRE_INERFACE_CALL ~stack() throw(){}
-		virtual bool SOLAIRE_INERFACE_CALL push_back(const T&) throw() = 0;
-		virtual bool SOLAIRE_INERFACE_CALL pop_back() throw() = 0;
-		virtual bool SOLAIRE_INERFACE_CALL clear() throw() = 0;
+		virtual SOLAIRE_INTERFACE_CALL ~stack() throw(){}
+		virtual bool SOLAIRE_INTERFACE_CALL push_back(const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL pop_back() throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL clear() throw() = 0;
 	};
 }}
 

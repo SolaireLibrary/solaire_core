@@ -248,11 +248,11 @@ namespace solaire {
 		#endif
 	#endif
 
-	#ifndef SOLAIRE_INERFACE_CALL
+	#ifndef SOLAIRE_INTERFACE_CALL
 		#if SOLAIRE_INSTRUCTION_SET == SOLAIRE_X86 || SOLAIRE_INSTRUCTION_SET == SOLAIRE_X64
-			#define SOLAIRE_INERFACE_CALL __stdcall
+			#define SOLAIRE_INTERFACE_CALL __stdcall
 		#else
-			#define SOLAIRE_INERFACE_CALL
+			#define SOLAIRE_INTERFACE_CALL
 		#endif
 	#endif
 

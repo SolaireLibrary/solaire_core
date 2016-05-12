@@ -21,9 +21,9 @@ namespace solaire { namespace interfaces {
 	template<class T>
 	SOLAIRE_EXPORT_INTERFACE list : public deque<T> {
     public:
-		virtual SOLAIRE_INERFACE_CALL ~list() throw(){}
-		virtual bool SOLAIRE_INERFACE_CALL insert(const uint32_t, const T&) throw() = 0;
-		virtual bool SOLAIRE_INERFACE_CALL erase(const uint32_t) throw() = 0;
+		virtual SOLAIRE_INTERFACE_CALL ~list() throw(){}
+		virtual bool SOLAIRE_INTERFACE_CALL insert(const uint32_t, const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL erase(const uint32_t) throw() = 0;
 	};
 }}
 

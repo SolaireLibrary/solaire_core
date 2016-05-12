@@ -23,12 +23,12 @@ namespace solaire {  namespace interfaces {
     public:
         typedef T Type;
     public:
-		virtual SOLAIRE_INERFACE_CALL ~container() throw(){}
-		virtual bool SOLAIRE_INERFACE_CALL is_contiguous() const throw() = 0;
-		virtual uint32_t SOLAIRE_INERFACE_CALL size() const throw() = 0;
-		virtual T* SOLAIRE_INERFACE_CALL get(const uint32_t) throw() = 0;
-		virtual iterator<T> SOLAIRE_INERFACE_CALL get_begin_iterator() throw() = 0;
-		virtual iterator<T> SOLAIRE_INERFACE_CALL get_end_iterator() throw() = 0;
+		virtual SOLAIRE_INTERFACE_CALL ~container() throw(){}
+		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
+		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
+		virtual T* SOLAIRE_INTERFACE_CALL get(const uint32_t) throw() = 0;
+		virtual iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() = 0;
+		virtual iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() = 0;
 	};
 }}
 

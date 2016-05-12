@@ -22,13 +22,13 @@ namespace solaire { namespace interfaces {
 	SOLAIRE_EXPORT_INTERFACE raw_iterator {
 	public:
 		typedef T Type;
-		virtual SOLAIRE_INERFACE_CALL ~raw_iterator() throw(){}
+		virtual SOLAIRE_INTERFACE_CALL ~raw_iterator() throw(){}
 
-		virtual const T* SOLAIRE_INERFACE_CALL dereference() const throw() = 0;
-		virtual void SOLAIRE_INERFACE_CALL increment(const uint32_t) throw() = 0;
-		virtual void SOLAIRE_INERFACE_CALL decrement(const uint32_t) throw() = 0;
-		virtual void SOLAIRE_INERFACE_CALL copy(raw_iterator<T>* const) const throw() = 0;
-		virtual int32_t SOLAIRE_INERFACE_CALL get_offset() const throw() = 0;
+		virtual const T* SOLAIRE_INTERFACE_CALL dereference() const throw() = 0;
+		virtual void SOLAIRE_INTERFACE_CALL increment(const uint32_t) throw() = 0;
+		virtual void SOLAIRE_INTERFACE_CALL decrement(const uint32_t) throw() = 0;
+		virtual void SOLAIRE_INTERFACE_CALL copy(raw_iterator<T>* const) const throw() = 0;
+		virtual int32_t SOLAIRE_INTERFACE_CALL get_offset() const throw() = 0;
 	};
 
 	enum {
