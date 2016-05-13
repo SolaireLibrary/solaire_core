@@ -18,7 +18,7 @@
 #include "solaire/core/list.hpp"
 #include "solaire/core/iterators/contiguous_iterator.hpp"
 
-namespace solaire { namespace interfaces {
+namespace solaire {
 	template<class T>
 	SOLAIRE_EXPORT_CLASS contiguous_list : public list<T> {
 	protected:
@@ -113,6 +113,6 @@ namespace solaire { namespace interfaces {
 			return true;
 		}
 	};
-}}
+}
 
 #endif

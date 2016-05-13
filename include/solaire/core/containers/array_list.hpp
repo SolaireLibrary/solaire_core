@@ -19,46 +19,44 @@
 #include "solaire/core/container.hpp"
 
 namespace solaire {
-	namespace interfaces {
-		template<class T>
-		SOLAIRE_EXPORT_CLASS array_list : public heap_array<T>{
-			// Inherited from heap_array
-			virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
-				if(aSize < mSize) return true;
-				mSize *= 2;
-				T* const tmp = allocate(mSize);
-				if(tmp == nullptr) return false;
-				for(uint32_t i = 0; i < mHeadPosition; ++i) tmp[i] = mBasePointer[i];
-				get_allocator().deallocate(mBasePointer);
-				mBasePointer = tmp;
-				return true;
-			}
-		public:
-			array_list() :
-				heap_array(32)
-			{
-				mHeadPosition = 0;
-			}
+	template<class T>
+	SOLAIRE_EXPORT_CLASS array_list : public heap_array<T>{
+		// Inherited from heap_array
+		virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+			if(aSize < mSize) return true;
+			mSize *= 2;
+			T* const tmp = allocate(mSize);
+			if(tmp == nullptr) return false;
+			for(uint32_t i = 0; i < mHeadPosition; ++i) tmp[i] = mBasePointer[i];
+			get_allocator().deallocate(mBasePointer);
+			mBasePointer = tmp;
+			return true;
+		}
+	public:
+		array_list() :
+			heap_array(32)
+		{
+			mHeadPosition = 0;
+		}
 
-			array_list(const container<T>& aContainer) :
-				heap_array(aContainer.size())
-			{
-				const uint32_t size = aContainer.size();
-				if(aContainer.is_contiguous()) {
-					const T* const ptr = &aContainer[0];
-					for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = ptr[i];
-				}else {
-					for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = aContainer[i];
-				}
+		array_list(const container<T>& aContainer) :
+			heap_array(aContainer.size())
+		{
+			const uint32_t size = aContainer.size();
+			if(aContainer.is_contiguous()) {
+				const T* const ptr = &aContainer[0];
+				for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = ptr[i];
+			}else {
+				for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = aContainer[i];
 			}
+		}
 
-			array_list(const uint32_t aSize) :
-				heap_array(aSize)
-			{
-				mHeadPosition = 0;
-			}
-		};
-	}
+		array_list(const uint32_t aSize) :
+			heap_array(aSize)
+		{
+			mHeadPosition = 0;
+		}
+	};
 }
 
 #endif

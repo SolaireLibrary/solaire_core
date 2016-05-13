@@ -20,76 +20,74 @@
 #include "solaire/core/list.hpp"
 
 namespace solaire { 
-	namespace interfaces {
-		template<class T>
-		SOLAIRE_EXPORT_CLASS heap_array : public contiguous_list<T> {
-		protected:
-			uint32_t mSize;
+	template<class T>
+	SOLAIRE_EXPORT_CLASS heap_array : public contiguous_list<T> {
+	protected:
+		uint32_t mSize;
 
-			inline static T* allocate(const uint32_t aSize) {
-				void* const ptr = get_allocator().allocate(sizeof(T) * aSize);
-				runtime_assert(ptr, "solaire::interfaces::heap_array::allocate : failed to allocate memory");
-				return static_cast<T*>(ptr);
-			}
+		inline static T* allocate(const uint32_t aSize) {
+			void* const ptr = get_allocator().allocate(sizeof(T) * aSize);
+			runtime_assert(ptr, "solaire::interfaces::heap_array::allocate : failed to allocate memory");
+			return static_cast<T*>(ptr);
+		}
 
-			// Inherited from ContiguousArray
-			 virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
-				return aSize <= mSize;
-			}
-		public:
-			heap_array(const uint32_t aSize) :
-				contiguous_list(allocate(aSize)),
-				mSize(aSize)
-			{
-				mHeadPosition = mSize;
-			}
+		// Inherited from ContiguousArray
+			virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+			return aSize <= mSize;
+		}
+	public:
+		heap_array(const uint32_t aSize) :
+			contiguous_list(allocate(aSize)),
+			mSize(aSize)
+		{
+			mHeadPosition = mSize;
+		}
 		
-			heap_array(heap_array<T>&& aOther) throw() :
-				contiguous_list(aOther),
-				mSize(aOther.mSize)
-			{
-				aOther.mBasePointer = nullptr;
-				aOther.mHeadPosition = 0;
-				aOther.mSize = 0;
-			}
+		heap_array(heap_array<T>&& aOther) throw() :
+			contiguous_list(aOther),
+			mSize(aOther.mSize)
+		{
+			aOther.mBasePointer = nullptr;
+			aOther.mHeadPosition = 0;
+			aOther.mSize = 0;
+		}
 
-			heap_array(const heap_array<T>& aOther) throw() :
-				contiguous_list(allocate(aOther.mSize)),
-				mSize(aOther.mSize)
-			{
-				mHeadPosition = aOther.mHeadPosition;
-				for(uint32_t i = 0; i < mHeadPosition; ++i) mBasePointer[i] = aOther.mBasePointer[i];
-			}
+		heap_array(const heap_array<T>& aOther) throw() :
+			contiguous_list(allocate(aOther.mSize)),
+			mSize(aOther.mSize)
+		{
+			mHeadPosition = aOther.mHeadPosition;
+			for(uint32_t i = 0; i < mHeadPosition; ++i) mBasePointer[i] = aOther.mBasePointer[i];
+		}
 	
-			virtual SOLAIRE_INTERFACE_CALL ~heap_array() throw() {
+		virtual SOLAIRE_INTERFACE_CALL ~heap_array() throw() {
+			if(mBasePointer) {
+				get_allocator().deallocate(mBasePointer);
+				mBasePointer = nullptr;
+			}
+		}
+		
+		heap_array<T>& operator=(heap_array<T>&& aOther) throw() {
+			std::swap(mBasePointer, aOther.mBasePointer);
+			std::swap(mHeadPosition, aOther.mHeadPosition);
+			std::swap(mSize, aOther.mSize);
+			return *this;
+		}
+
+		heap_array<T>& operator=(const heap_array<T>& aOther) {
+			if(mSize < aOther.mSize) {
 				if(mBasePointer) {
 					get_allocator().deallocate(mBasePointer);
 					mBasePointer = nullptr;
 				}
+				mBasePointer = allocator(aOther.mSize);
+				mSize = aOther.mSize;
 			}
-		
-			heap_array<T>& operator=(heap_array<T>&& aOther) throw() {
-				std::swap(mBasePointer, aOther.mBasePointer);
-				std::swap(mHeadPosition, aOther.mHeadPosition);
-				std::swap(mSize, aOther.mSize);
-				return *this;
-			}
-
-			heap_array<T>& operator=(const heap_array<T>& aOther) {
-				if(mSize < aOther.mSize) {
-					if(mBasePointer) {
-						get_allocator().deallocate(mBasePointer);
-						mBasePointer = nullptr;
-					}
-					mBasePointer = allocator(aOther.mSize);
-					mSize = aOther.mSize;
-				}
-				mHeadPosition = aOther.mHeadPosition;
-				for(uint32_t i = 0; i < mHeadPosition; ++i) mBasePointer[i] = aOther.mBasePointer[i];
-				return *this;
-			}
-		};
-	}
+			mHeadPosition = aOther.mHeadPosition;
+			for(uint32_t i = 0; i < mHeadPosition; ++i) mBasePointer[i] = aOther.mBasePointer[i];
+			return *this;
+		}
+	};
 }
 
 #endif

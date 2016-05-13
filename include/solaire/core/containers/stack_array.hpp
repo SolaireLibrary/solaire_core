@@ -19,24 +19,22 @@
 #include "solaire/core/list.hpp"
 
 namespace solaire { 
-	namespace interfaces {
-		template<class T, const uint32_t S>
-		SOLAIRE_EXPORT_CLASS stack_array : public contiguous_list<T> {
-		private:
-			T mArray[S];
-		protected:
-			// Inherited from contiguous_list
-			bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
-				return aSize <= S;
-			}
-		public:
-			stack_array() throw() :
-				contiguous_list(mArray)
-			{
-				mHeadPosition = S;
-			}
-		};
-	}
+	template<class T, const uint32_t S>
+	SOLAIRE_EXPORT_CLASS stack_array : public contiguous_list<T> {
+	private:
+		T mArray[S];
+	protected:
+		// Inherited from contiguous_list
+		bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+			return aSize <= S;
+		}
+	public:
+		stack_array() throw() :
+			contiguous_list(mArray)
+		{
+			mHeadPosition = S;
+		}
+	};
 }
 
 #endif
