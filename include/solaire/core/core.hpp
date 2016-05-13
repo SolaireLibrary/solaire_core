@@ -16,6 +16,7 @@
 //limitations under the License.
 
 #include <cstdint>
+#include <stdexcept>
 
 // Define constants
 	#define SOLAIRE_CORE
