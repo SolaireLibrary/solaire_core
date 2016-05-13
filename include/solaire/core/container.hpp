@@ -29,15 +29,15 @@ namespace solaire {
 		}
 
 		inline bool empty() const throw() {
-			return get_container().size() == 0;
+			return get_const_container().size() == 0;
 		}
 
 		inline uint32_t size() const throw() {
-			return get_container().size();
+			return get_const_container().size();
 		}
 
 		inline bool is_contiguous() const throw() {
-			return get_container().is_contiguous();
+			return get_const_container().is_contiguous();
 		}
 
 		inline iterator<T> begin() throw() {
@@ -45,7 +45,7 @@ namespace solaire {
 		}
 
 		inline iterator<const T> begin() const throw() {
-			return const_cast<interfaces::container<T>&>(get_container()).get_begin_iterator();
+			return const_cast<interfaces::container<T>&>(get_const_container()).get_begin_iterator();
 		}
 
 		inline iterator<T> end() throw() {
@@ -53,7 +53,7 @@ namespace solaire {
 		}
 
 		inline iterator<const T> end() const throw() {
-			return const_cast<interfaces::container<T>&>(get_container()).get_end_iterator();
+			return const_cast<interfaces::container<T>&>(get_const_container()).get_end_iterator();
 		}
 
 		T& operator[](const uint32_t aIndex) {

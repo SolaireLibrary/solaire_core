@@ -34,7 +34,7 @@ namespace solaire {
 
 			// Inherited from ContiguousArray
 			 virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
-				return aSize < mSize;
+				return aSize <= mSize;
 			}
 		public:
 			heap_array(const uint32_t aSize) :
