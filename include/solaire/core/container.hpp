@@ -15,55 +15,51 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#include "solaire/core/interfaces/container.hpp"
+#include "solaire/core/iterator.hpp"
 
 namespace solaire {
 	template<class T>
 	SOLAIRE_EXPORT_CLASS container {
+	protected:
+		virtual T* SOLAIRE_INTERFACE_CALL get(const uint32_t) throw() = 0;
+		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() = 0;
+		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() = 0;
 	public:
-		virtual interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_container() throw() = 0;
-		virtual const interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
+		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
 
 		virtual SOLAIRE_INTERFACE_CALL ~container() {
 
 		}
 
 		inline bool empty() const throw() {
-			return get_const_container().size() == 0;
-		}
-
-		inline uint32_t size() const throw() {
-			return get_const_container().size();
-		}
-
-		inline bool is_contiguous() const throw() {
-			return get_const_container().is_contiguous();
+			return size() == 0;
 		}
 
 		inline iterator<T> begin() throw() {
-			return get_container().get_begin_iterator();
+			return get_begin_iterator();
 		}
 
 		inline iterator<const T> begin() const throw() {
-			return const_cast<interfaces::container<T>&>(get_const_container()).get_begin_iterator();
+			return get_begin_iterator();
 		}
 
 		inline iterator<T> end() throw() {
-			return get_container().get_end_iterator();
+			return get_end_iterator();
 		}
 
 		inline iterator<const T> end() const throw() {
-			return const_cast<interfaces::container<T>&>(get_const_container()).get_end_iterator();
+			return get_end_iterator();
 		}
 
 		T& operator[](const uint32_t aIndex) {
-			T* const tmp = get_container().get(aIndex);
+			T* const tmp = get(aIndex);
 			if(tmp == nullptr) throw std::runtime_error("P12218319::container::operator[] : Failed to get item");
 			return *tmp;
 		}
 
 		const T& operator[](const uint32_t aIndex) const {
-			T* const tmp = const_cast<interfaces::container<T>&>(get_const_container()).get(aIndex);
+			T* const tmp = const_cast<container<T>*>(this)->get(aIndex);
 			if(tmp == nullptr) throw std::runtime_error("P12218319::container::operator[] : Failed to get item");
 			return *tmp;
 		}
@@ -144,30 +140,6 @@ namespace solaire {
 				i = find_next<F>(aFunctor);
 			}
 			return j;
-		}
-	};
-
-	template<class CONTAINER>
-	class value_container : public container<typename CONTAINER::type> {
-	private:
-		CONTAINER mContainer;
-	public:
-		template<class ...PARAMS>
-		value_container(PARAMS... aParams) :
-			mContainer(aParams...)
-		{}
-
-		virtual SOLAIRE_INTERFACE_CALL ~value_container() {
-
-		}
-
-		// inherited from container
-		interfaces::container<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_container() throw() override {
-			return mContainer;
-		}
-
-		const interfaces::container<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
-			return mContainer;
 		}
 	};
 }

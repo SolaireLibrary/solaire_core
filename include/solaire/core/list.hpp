@@ -20,60 +20,27 @@
 namespace solaire {
 	template<class T>
 	class list : public deque<T> {
+	protected:
+		virtual bool SOLAIRE_INTERFACE_CALL _insert(const uint32_t, const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _erase(const uint32_t) throw() = 0;
 	public:
 		virtual SOLAIRE_INTERFACE_CALL ~list() {
 
 		}
 
-		virtual interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_list() throw() = 0;
-		virtual const interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_const_list() const throw() = 0;
-
-		inline T& insert_before(const uint32_t aIndex, const T& avalue_) {
-			if(! get_list().insert(aIndex, avalue_)) throw std::runtime_error("P12218319::stack::insert_before : Failed to insert item");
+		inline T& insert_before(const uint32_t aIndex, const T& aValue) {
+			runtime_assert(_insert(aIndex, avalue_), "P12218319::stack::insert_before : Failed to insert item");
 			return container<T>::operator[](aIndex);
 		}
 
-		inline T& insert_after(const uint32_t aIndex, const T& avalue_) {
-			return insert_before(aIndex + 1, avalue_);
+		inline T& insert_after(const uint32_t aIndex, const T& aValue) {
+			return insert_before(aIndex + 1, aValue);
 		}
 
 		inline T erase(const uint32_t aIndex) {
 			T tmp = container<T>::operator[](aIndex);
-			if(! get_list().erase(aIndex)) throw std::runtime_error("P12218319::list::erase : Failed to erase item");
+			runtime_assert(_erase(aIndex), "P12218319::list::erase : Failed to erase item");
 			return tmp;
-		}
-
-		// Inherited from deque
-		interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_deque() throw() override {
-		    return get_list();
-		}
-
-		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
-		    return get_const_list();
-		}
-	};
-
-	template<class CONTAINER>
-	class value_list : public list<typename CONTAINER::type> {
-	private:
-		CONTAINER mContainer;
-	public:
-		template<class ...PARAMS>
-		value_list(PARAMS... aParams) :
-			mContainer(aParams...)
-		{}
-
-		virtual SOLAIRE_INTERFACE_CALL ~value_list() {
-
-		}
-
-		// inherited from deque
-		interfaces::list<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_list() throw() override {
-			return mContainer;
-		}
-
-		const interfaces::list<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_list() const throw() override {
-			return mContainer;
 		}
 	};
 }

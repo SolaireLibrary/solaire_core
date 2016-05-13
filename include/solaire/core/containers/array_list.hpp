@@ -16,6 +16,7 @@
 //limitations under the License.
 
 #include "solaire/core/containers/heap_array.hpp"
+#include "solaire/core/container.hpp"
 
 namespace solaire {
 	namespace interfaces {
@@ -39,6 +40,18 @@ namespace solaire {
 				mHeadPosition = 0;
 			}
 
+			array_list(const container<T>& aContainer) :
+				heap_array(aContainer.size())
+			{
+				const uint32_t size = aContainer.size();
+				if(aContainer.is_contiguous()) {
+					const T* const ptr = &aContainer[0];
+					for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = ptr[i];
+				}else {
+					for(uint32_t i = 0; i < size; ++i) mBasePointer[i] = aContainer[i];
+				}
+			}
+
 			array_list(const uint32_t aSize) :
 				heap_array(aSize)
 			{
@@ -46,9 +59,6 @@ namespace solaire {
 			}
 		};
 	}
-
-	template<class T>
-	using array_list = value_list<interfaces::array_list<T>>;
 }
 
 #endif

@@ -37,9 +37,6 @@ namespace solaire {
 			}
 		};
 	}
-
-	template<class T, const uint32_t S>
-	using stack_array = value_list<interfaces::stack_array<T,S>>;
 }
 
 #endif

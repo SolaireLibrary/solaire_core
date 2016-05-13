@@ -16,7 +16,7 @@
 //limitations under the License.
 
 #include "solaire/core/interfaces/allocator.hpp"
-#include "solaire/core/iterators/contiguous_iterator.hpp"
+#include "solaire/core/containers/contiguous_list.hpp"
 #include "solaire/core/list.hpp"
 
 namespace solaire { 
@@ -90,9 +90,6 @@ namespace solaire {
 			}
 		};
 	}
-
-	template<class T>
-	using heap_array = value_list<interfaces::heap_array<T>>;
 }
 
 #endif

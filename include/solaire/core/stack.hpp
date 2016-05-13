@@ -20,22 +20,25 @@
 namespace solaire {
 	template<class T>
 	class stack : public container<T> {
+	protected:
+		virtual bool SOLAIRE_INTERFACE_CALL _push_back(const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _pop_back() throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _clear() throw() = 0;
 	public:
 		virtual SOLAIRE_INTERFACE_CALL ~stack() {
 
 		}
 
-		virtual interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_stack() throw() = 0;
-		virtual const interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() = 0;
 
 		inline T& push_back(const T& avalue_) {
-			if(! get_stack().push_back(avalue_)) throw std::runtime_error("P12218319::stack::push_back : Failed to push item");
+			runtime_assert(_push_back(avalue_), "P12218319::stack::push_back : Failed to push item");
 			return container<T>::back();
 		}
 
 		inline T pop_back() {
 			T tmp = container<T>::back();
-			if(! get_stack().pop_back()) throw std::runtime_error("P12218319::stack::pop_back : Failed to pop item");
+			runtime_assert(_pop_back(), "P12218319::stack::pop_back : Failed to pop item");
 			return tmp;
 		}
 
@@ -45,40 +48,7 @@ namespace solaire {
 		}
 
 		inline void clear() throw() {
-		    get_stack().clear();
-		}
-
-		// Inherited from container
-		interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_container() throw() override {
-		    return get_stack();
-		}
-
-		const interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
-		    return get_const_stack();
-		}
-	};
-
-	template<class CONTAINER>
-	class value_stack : public stack<typename CONTAINER::type> {
-	private:
-		CONTAINER mContainer;
-	public:
-		template<class ...PARAMS>
-		value_stack(PARAMS... aParams) :
-			mContainer(aParams...)
-		{}
-
-		virtual SOLAIRE_INTERFACE_CALL ~value_stack() {
-
-		}
-
-		// inherited from stack
-		interfaces::stack<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_stack() throw() override {
-			return mContainer;
-		}
-
-		const interfaces::stack<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
-			return mContainer;
+			runtime_assert(_clear(), "P12218319::stack::clear : Failed to clear");
 		}
 	};
 }

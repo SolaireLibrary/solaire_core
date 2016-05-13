@@ -20,61 +20,28 @@
 namespace solaire {
 	template<class T>
 	class deque : public stack<T> {
+	protected:
+		virtual bool SOLAIRE_INTERFACE_CALL _push_front(const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _pop_front() throw() = 0;
 	public:
 		virtual SOLAIRE_INTERFACE_CALL ~deque() {
 
 		}
 
-		virtual interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_deque() throw() = 0;
-		virtual const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() = 0;
-
 		inline T& push_front(const T& avalue_) {
-			if(! get_deque().push_front(avalue_)) throw std::runtime_error("P12218319::deque::push_front : Failed to push item");
+			runtime_assert(_push_front(avalue_), "P12218319::deque::push_front : Failed to push item");
 			return container<T>::front();
 		}
 
 		inline T pop_front() {
 			T tmp = container<T>::front();
-			if(! get_deque().pop_front()) throw std::runtime_error("P12218319::deque::pop_front : Failed to pop item");
+			runtime_assert(_pop_front(), "P12218319::deque::pop_front : Failed to pop item");
 			return tmp;
 		}
 
 		inline void push_front(const container<T>& aOther) {
 			const iterator<const T> end = aOther.end();
 			for(iterator<const T> i = aOther.begin(); i != end; ++i) push_front(*i);
-		}
-
-		// Inherited from stack
-		interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_stack() throw() override {
-		    return get_deque();
-		}
-
-		const interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
-		    return get_const_deque();
-		}
-	};
-
-	template<class CONTAINER>
-	class value_deque : public deque<typename CONTAINER::type> {
-	private:
-		CONTAINER mContainer;
-	public:
-		template<class ...PARAMS>
-		value_deque(PARAMS... aParams) :
-			mContainer(aParams...)
-		{}
-
-		virtual SOLAIRE_INTERFACE_CALL ~value_deque() {
-
-		}
-
-		// inherited from deque
-		interfaces::deque<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_deque() throw() override {
-			return mContainer;
-		}
-
-		const interfaces::deque<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
-			return mContainer;
 		}
 	};
 }

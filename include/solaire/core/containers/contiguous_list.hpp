@@ -15,7 +15,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#include "solaire/core/interfaces/list.hpp"
+#include "solaire/core/list.hpp"
 #include "solaire/core/iterators/contiguous_iterator.hpp"
 
 namespace solaire { namespace interfaces {
@@ -26,6 +26,68 @@ namespace solaire { namespace interfaces {
 		uint32_t mHeadPosition;
 
 		virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t) throw() = 0;
+
+		// Inherited from container
+		T* SOLAIRE_INTERFACE_CALL get(const uint32_t aIndex) throw() override {
+			if (!mBasePointer) return nullptr;
+			if (aIndex >= mHeadPosition) return nullptr;
+			return mBasePointer + aIndex;
+		}
+
+		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() override {
+			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, 0));
+		}
+
+		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() override {
+			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, mHeadPosition));
+		}
+
+		// Inherited from stack
+		bool SOLAIRE_INTERFACE_CALL push_back(const T& aValue) throw() override {
+			if (!mBasePointer) return nullptr;
+			if (!assert_size(mHeadPosition + 1)) return false;
+			mBasePointer[mHeadPosition++] = aValue;
+			return true;
+		}
+
+		bool SOLAIRE_INTERFACE_CALL pop_back() throw() override {
+			if (!mBasePointer) return nullptr;
+			if (mHeadPosition == 0) return false;
+			--mHeadPosition;
+		}
+
+		bool SOLAIRE_INTERFACE_CALL clear() throw() override {
+			mHeadPosition = 0;
+			return true;
+		}
+
+		// Inherited from deque
+		bool SOLAIRE_INTERFACE_CALL push_front(const T& aValue) throw() override {
+			return insert(0, aValue);
+		}
+
+		bool SOLAIRE_INTERFACE_CALL pop_front() throw() override {
+			return erase(0);
+		}
+
+		// Inherited from list
+		bool SOLAIRE_INTERFACE_CALL insert(const uint32_t aIndex, const T& aValue) throw() override {
+			if (!mBasePointer) return nullptr;
+			if (aIndex >= mHeadPosition) return false;
+			if (!assert_size(mHeadPosition + 1)) return false;
+			for (uint32_t i = mHeadPosition - 1; i > aIndex; --i) mBasePointer[i] = mBasePointer[i - 1];
+			mBasePointer[aIndex] = aValue;
+			++mHeadPosition;
+			return true;
+		}
+
+		bool SOLAIRE_INTERFACE_CALL erase(const uint32_t aIndex) throw() override {
+			if (!mBasePointer) return nullptr;
+			if (mHeadPosition == 0) return false;
+			for (uint32_t i = aIndex; i < mHeadPosition; ++i) mBasePointer[i] = mBasePointer[i + 1];
+			--mHeadPosition;
+			return true;
+		}
 	public:
 		contiguous_list(T* aPointer) :
 			mBasePointer(aPointer),
@@ -46,68 +108,8 @@ namespace solaire { namespace interfaces {
 			return mHeadPosition;
 		}
 
-		T* SOLAIRE_INTERFACE_CALL get(const uint32_t aIndex) throw() override {
-			if(! mBasePointer) return nullptr;
-			if(aIndex >= mHeadPosition) return nullptr;
-			return mBasePointer + aIndex;
-		}
-
-		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() override {
-			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, 0));
-		}
-
-		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() override {
-			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, mHeadPosition));
-		}
-
 		// Inherited from stack
-		bool SOLAIRE_INTERFACE_CALL push_back(const T& aValue) throw() override {
-			if(! mBasePointer) return nullptr;
-			if(! assert_size(mHeadPosition + 1)) return false;
-			mBasePointer[mHeadPosition++] = aValue;
-			return true;
-		}
-
-		bool SOLAIRE_INTERFACE_CALL pop_back() throw() override {
-			if(! mBasePointer) return nullptr;
-			if(mHeadPosition == 0) return false;
-			--mHeadPosition;
-		}
-
-		bool SOLAIRE_INTERFACE_CALL clear() throw() override {
-		    mHeadPosition = 0;
-			return true;
-		}
-
 		bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() override {
-			return true;
-		}
-
-		// Inherited from deque
-		bool SOLAIRE_INTERFACE_CALL push_front(const T& aValue) throw() override {
-			return insert(0, aValue);
-		}
-
-		bool SOLAIRE_INTERFACE_CALL pop_front() throw() override {
-			return erase(0);
-		}
-
-		// Inherited from list
-		bool SOLAIRE_INTERFACE_CALL insert(const uint32_t aIndex, const T& aValue) throw() override {
-			if(! mBasePointer) return nullptr;
-			if(aIndex >= mHeadPosition) return false;
-			if(! assert_size(mHeadPosition + 1)) return false;
-			for(uint32_t i = mHeadPosition - 1; i > aIndex; --i) mBasePointer[i] = mBasePointer[i-1];
-			mBasePointer[aIndex] = aValue;
-			++mHeadPosition;
-			return true;
-		}
-
-		bool SOLAIRE_INTERFACE_CALL erase(const uint32_t aIndex) throw() override {
-			if(! mBasePointer) return nullptr;
-			if(mHeadPosition == 0) return false;
-			for(uint32_t i = aIndex; i < mHeadPosition; ++i) mBasePointer[i] = mBasePointer[i+1];
-			--mHeadPosition;
 			return true;
 		}
 	};
