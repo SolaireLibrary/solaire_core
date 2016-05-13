@@ -48,7 +48,7 @@ namespace solaire {
 		    return get_list();
 		}
 
-		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_deque() const throw() override {
+		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
 		    return get_list();
 		}
 	};

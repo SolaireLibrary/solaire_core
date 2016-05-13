@@ -18,9 +18,9 @@
 #include "solaire/core/interfaces/list.hpp"
 #include "solaire/core/iterators/contiguous_iterator.hpp"
 
-namespace solaire {
+namespace solaire { namespace interfaces {
 	template<class T>
-	SOLAIRE_EXPORT_CLASS contiguous_list : public interfaces::list<T> {
+	SOLAIRE_EXPORT_CLASS contiguous_list : public list<T> {
 	protected:
 		T* mBasePointer;
 		uint32_t mHeadPosition;
@@ -52,12 +52,12 @@ namespace solaire {
 			return mBasePointer + aIndex;
 		}
 
-		iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() override {
-			return iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, 0));
+		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() override {
+			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, 0));
 		}
 
-		iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() override {
-			return iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, mHeadPosition));
+		solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() override {
+			return solaire::iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, mHeadPosition));
 		}
 
 		// Inherited from stack
@@ -74,8 +74,13 @@ namespace solaire {
 			--mHeadPosition;
 		}
 
-		void SOLAIRE_INTERFACE_CALL clear() throw() override {
+		bool SOLAIRE_INTERFACE_CALL clear() throw() override {
 		    mHeadPosition = 0;
+			return true;
+		}
+
+		bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() override {
+			return true;
 		}
 
 		// Inherited from deque
@@ -106,6 +111,6 @@ namespace solaire {
 			return true;
 		}
 	};
-}
+}}
 
 #endif

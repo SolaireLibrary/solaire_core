@@ -27,8 +27,8 @@ namespace solaire {  namespace interfaces {
 		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
 		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
 		virtual T* SOLAIRE_INTERFACE_CALL get(const uint32_t) throw() = 0;
-		virtual iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() = 0;
-		virtual iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() = 0;
+		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() = 0;
+		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() = 0;
 	};
 }}
 

@@ -25,6 +25,7 @@ namespace solaire { namespace interfaces {
 		virtual bool SOLAIRE_INTERFACE_CALL push_back(const T&) throw() = 0;
 		virtual bool SOLAIRE_INTERFACE_CALL pop_back() throw() = 0;
 		virtual bool SOLAIRE_INTERFACE_CALL clear() throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() = 0;
 	};
 }}
 

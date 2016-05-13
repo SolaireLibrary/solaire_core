@@ -30,25 +30,25 @@ namespace solaire {
 		uint8_t mImplementation[interfaces::MAX_INTERFACES_ITERATOR_SIZE];
 		bool mCreated;
 	private:
-	    SOLAIRE_FORCE_INLINE interfaces::iterator<T>& getiterator() {
-			if(! mCreated) throw std::runtime_error("P12218319::iterator::getiterator : Cannot dereference null interfaces::iterator");
+	    SOLAIRE_FORCE_INLINE interfaces::iterator<T>& get_iterator() {
+			if(! mCreated) throw std::runtime_error("P12218319::iterator::get_iterator : Cannot dereference null interfaces::iterator");
 			return *reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
 	    }
 
-	    SOLAIRE_FORCE_INLINE const interfaces::iterator<T>& getiterator() const {
-			if(! mCreated) throw std::runtime_error("P12218319::iterator::getiterator : Cannot dereference null interfaces::iterator");
+	    SOLAIRE_FORCE_INLINE const interfaces::iterator<T>& get_iterator() const {
+			if(! mCreated) throw std::runtime_error("P12218319::iterator::get_iterator : Cannot dereference null interfaces::iterator");
 			return *reinterpret_cast<const interfaces::iterator<T>*>(mImplementation);
 	    }
 
 		inline const T* dereference() const {
-			const T* const tmp = getiterator().dereference();
+			const T* const tmp = get_iterator().dereference();
 			if(tmp == nullptr) throw std::runtime_error("P12218319::iterator::dereference : Out of bounds");
 			return tmp;
 		}
 
 		inline void increment(const uint32_t aOffset) throw() {
 			if(mCreated) {
-				getiterator().increment(aOffset);
+				get_iterator().increment(aOffset);
 			}else {
 				int32_t& offset = *reinterpret_cast<int32_t*>(mImplementation);
 				offset += aOffset;
@@ -57,7 +57,7 @@ namespace solaire {
 
 		inline void decrement(const uint32_t aOffset) throw() {
 			if(mCreated) {
-				getiterator().decrement(aOffset);
+				get_iterator().decrement(aOffset);
 			}else {
 				int32_t& offset = *reinterpret_cast<int32_t*>(mImplementation);
 				offset -= aOffset;
@@ -66,12 +66,12 @@ namespace solaire {
 
 		inline void copy(interfaces::iterator<T>* const aPointer) const {
 			if(! mCreated) throw std::runtime_error("P12218319::iterator::copy : Cannot copy null interfaces::iterator");
-			return getiterator().copy(aPointer);
+			return get_iterator().copy(aPointer);
 		}
 
 		inline int32_t get_offset() const {
 			if(mCreated) {
-				return getiterator().get_offset();
+				return get_iterator().get_offset();
 			}else {
 				return *reinterpret_cast<const int32_t*>(mImplementation);
 			}
@@ -88,7 +88,7 @@ namespace solaire {
 			mCreated(false)
 		{
 			if(aOther.mCreated) {
-				aOther.copy(&getiterator());
+				aOther.copy(&get_iterator());
 				mCreated = true;
 			}else {
 				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
@@ -100,7 +100,7 @@ namespace solaire {
 			mCreated(false)
 		{
 			if(aOther.mCreated) {
-				aOther.copy(&getiterator());
+				aOther.copy(&get_iterator());
 				mCreated = true;
 			}else {
 				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
@@ -111,16 +111,16 @@ namespace solaire {
 		iterator(const interfaces::iterator<T>& aiterator) :
             mCreated(true)
         {
-            aiterator.copy(&getiterator());
+            aiterator.copy(&get_iterator());
         }
 
 		~iterator() {
-			if(mCreated) getiterator().~interfaces::iterator();
+			if(mCreated) get_iterator().~iterator();
 		}
 
 		inline iterator<T>& operator=(iterator<T>&& aOther) {
 			interfaces::iterator<T>* const iterator = reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
-			if(mCreated) iterator->~interfaces::iterator();
+			if(mCreated) iterator->~iterator();
 			if(aOther.mCreated) {
 				aOther.copy(iterator);
 				mCreated = true;
@@ -133,7 +133,7 @@ namespace solaire {
 
 		inline iterator<T>& operator=(const iterator<T>& aOther) {
 			interfaces::iterator<T>* const iterator = reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
-			if(mCreated) iterator->~interfaces::iterator();
+			if(mCreated) iterator->~iterator();
 			if(aOther.mCreated) {
 				aOther.copy(iterator);
 				mCreated = true;

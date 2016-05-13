@@ -31,6 +31,12 @@ namespace solaire {
 			{
 				mHeadPosition = 0;
 			}
+
+			array_list(const uint32_t aSize) :
+				heap_array(aSize)
+			{
+				mHeadPosition = 0;
+			}
 		};
 	}
 
