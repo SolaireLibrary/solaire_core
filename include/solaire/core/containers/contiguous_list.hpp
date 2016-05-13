@@ -63,7 +63,7 @@ namespace solaire {
 
 		// Inherited from deque
 		bool SOLAIRE_INTERFACE_CALL _push_front(const T& aValue) throw() override {
-			return _insert(0, aValue);
+			return mHeadPosition == 0 ? _push_back(aValue) : _insert(0, aValue);
 		}
 
 		bool SOLAIRE_INTERFACE_CALL _pop_front() throw() override {
@@ -72,10 +72,14 @@ namespace solaire {
 
 		// Inherited from list
 		bool SOLAIRE_INTERFACE_CALL _insert(const uint32_t aIndex, const T& aValue) throw() override {
-			if (!mBasePointer) return nullptr;
-			if (aIndex >= mHeadPosition) return false;
-			if (!assert_size(mHeadPosition + 1)) return false;
-			for (uint32_t i = mHeadPosition - 1; i > aIndex; --i) mBasePointer[i] = mBasePointer[i - 1];
+			if(! mBasePointer) return nullptr;
+			if(aIndex != 0) if(aIndex >= mHeadPosition) return false;
+			if(! assert_size(mHeadPosition + 1)) return false;
+			const uint32_t offset = mHeadPosition;
+			for(uint32_t i = 0; i <= mHeadPosition; ++i) {
+				const uint32_t j = offset - i;
+				mBasePointer[j] = mBasePointer[j - 1];
+			}
 			mBasePointer[aIndex] = aValue;
 			++mHeadPosition;
 			return true;
