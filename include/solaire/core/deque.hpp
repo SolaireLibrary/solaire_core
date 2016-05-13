@@ -53,6 +53,30 @@ namespace solaire {
 		    return get_deque();
 		}
 	};
+
+	template<class T, class CONTAINER>
+	class value_deque : public deque<T> {
+	private:
+		CONTAINER mContainer;
+	public:
+		template<class ...PARAMS>
+		value_deque(PARAMS... aParams) :
+			mContainer(aParams...)
+		{}
+
+		virtual SOLAIRE_INTERFACE_CALL ~value_deque() {
+
+		}
+
+		// inherited from deque
+		interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_deque() throw() override {
+			return mContainer;
+		}
+
+		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
+			return mContainer;
+		}
+	};
 }
 
 #endif

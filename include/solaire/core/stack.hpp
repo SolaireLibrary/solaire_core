@@ -57,6 +57,30 @@ namespace solaire {
 		    return get_stack();
 		}
 	};
+
+	template<class T, class CONTAINER>
+	class value_stack : public stack<T> {
+	private:
+		CONTAINER mContainer;
+	public:
+		template<class ...PARAMS>
+		value_stack(PARAMS... aParams) :
+			mContainer(aParams...)
+		{}
+
+		virtual SOLAIRE_INTERFACE_CALL ~value_stack() {
+
+		}
+
+		// inherited from stack
+		interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_stack() throw() override {
+			return mContainer;
+		}
+
+		const interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
+			return mContainer;
+		}
+	};
 }
 
 #endif

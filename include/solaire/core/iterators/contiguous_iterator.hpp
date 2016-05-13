@@ -17,7 +17,7 @@
 
 #include "solaire/core/interfaces/iterator.hpp"
 
-namespace solaire {
+namespace solaire { namespace interfaces {
 	template<class T>
 	SOLAIRE_EXPORT_CLASS contiguous_iterator : public interfaces::iterator<T> {
 		private:
@@ -87,6 +87,6 @@ namespace solaire {
 			return mOffset;
 		}
 	};
-}
+}}
 
 #endif

@@ -53,11 +53,11 @@ namespace solaire {
 		}
 
 		iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() override {
-			return iterator<T>(contiguous_iterator<T>(mBasePointer, 0));
+			return iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, 0));
 		}
 
 		iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() override {
-			return iterator<T>(contiguous_iterator<T>(mBasePointer, mHeadPosition));
+			return iterator<T>(interfaces::contiguous_iterator<T>(mBasePointer, mHeadPosition));
 		}
 
 		// Inherited from stack

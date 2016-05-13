@@ -146,6 +146,30 @@ namespace solaire {
 			return j;
 		}
 	};
+
+	template<class T, class CONTAINER>
+	class value_container : public container<T> {
+	private:
+		CONTAINER mContainer;
+	public:
+		template<class ...PARAMS>
+		value_container(PARAMS... aParams) :
+			mContainer(aParams...)
+		{}
+
+		virtual SOLAIRE_INTERFACE_CALL ~value_container() {
+
+		}
+
+		// inherited from container
+		interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_container() throw() override {
+			return mContainer;
+		}
+
+		const interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
+			return mContainer;
+		}
+	};
 }
 
 #endif

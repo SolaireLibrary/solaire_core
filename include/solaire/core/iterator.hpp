@@ -27,7 +27,7 @@ namespace solaire {
 	public:
 		typedef T Type;
 	private:
-		uint8_t mImplementation[MAX_INTERFACES_ITERATOR_SIZE];
+		uint8_t mImplementation[interfaces::MAX_INTERFACES_ITERATOR_SIZE];
 		bool mCreated;
 	private:
 	    SOLAIRE_FORCE_INLINE interfaces::iterator<T>& getiterator() {
