@@ -28,9 +28,9 @@ namespace solaire {
 	};
 }
 
-extern "C" void SOLAIRE_EXPORT_CALL solaire_set_allocator(solaire::allocator*);
-extern "C" solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_allocator();
-extern "C" solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_default_allocator();
+extern "C" SOLAIRE_EXPORT_API void SOLAIRE_EXPORT_CALL solaire_set_allocator(solaire::allocator*);
+extern "C" SOLAIRE_EXPORT_API solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_allocator();
+extern "C" SOLAIRE_EXPORT_API solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_default_allocator();
 
 namespace solaire {
 

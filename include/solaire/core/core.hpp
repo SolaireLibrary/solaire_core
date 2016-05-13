@@ -44,6 +44,10 @@
 	#define SOLAIRE_CPP_14              2014
 	#define SOLAIRE_CPP_17              2017
 
+	#define SOLAIRE_STATIC_COMPILE			1
+	#define SOLAIRE_SHARED_IMPORT_COMPILE	2
+	#define SOLAIRE_SHARED_EXPORT_COMPILE	3
+
 // Detect OS
 	#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 		#define SOLAIRE_OS SOLAIRE_WINDOWS
@@ -169,6 +173,10 @@
 
 // Define missing macros
 
+	#ifndef SOLAIRE_COMPILE_MODE
+		#define SOLAIRE_COMPILE_MODE SOLAIRE_STATIC_COMPILE
+	#endif
+
 	#ifndef SOLAIRE_CPP_VER
 		#define SOLAIRE_CPP_VER SOLAIRE_CPP_98
 		#pragma message("SOLAIRE_CPP_VER = SOLAIRE_CPP_98")
@@ -239,6 +247,26 @@ namespace solaire {
 
 	#define SOLAIRE_EXPORT_CLASS class
 	#define SOLAIRE_EXPORT_INTERFACE class
+
+	#ifndef SOLAIRE_COMPILE_MODE
+		#define SOLAIRE_COMPILE_MODE SOLAIRE_STATIC_COMPILE
+	#endif
+
+	#if SOLAIRE_COMPILE_MODE == SOLAIRE_SHARED_IMPORT_COMPILE
+		#if SOLAIRE_OS == SOLAIRE_WINDOWS
+			#define SOLAIRE_EXPORT_API __declspec(dllimport)
+		#endif
+	#endif
+
+	#if SOLAIRE_COMPILE_MODE == SOLAIRE_SHARED_EXPORT_COMPILE
+		#if SOLAIRE_OS == SOLAIRE_WINDOWS
+			#define SOLAIRE_EXPORT_API __declspec(dllexport)
+		#endif
+	#endif
+
+	#ifndef SOLAIRE_EXPORT_API
+		#define SOLAIRE_EXPORT_API
+	#endif
 
 	#ifndef SOLAIRE_EXPORT_CALL
 		#if SOLAIRE_INSTRUCTION_SET == SOLAIRE_X86 || SOLAIRE_INSTRUCTION_SET == SOLAIRE_X64

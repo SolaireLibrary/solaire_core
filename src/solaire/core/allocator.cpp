@@ -74,18 +74,20 @@ public:
 	}
 };
 
-solaire::allocator* CURRENT_ALLOCATOR = nullptr;
+#if SOLAIRE_COMPILE_MODE != SOLAIRE_SHARED_IMPORT_COMPILE
+	solaire::allocator* CURRENT_ALLOCATOR = nullptr;
 
-extern "C" void SOLAIRE_EXPORT_CALL solaire_set_allocator(solaire::allocator* aAllocator) {
-	CURRENT_ALLOCATOR = aAllocator;
-}
+	extern "C" SOLAIRE_EXPORT_API void SOLAIRE_EXPORT_CALL solaire_set_allocator(solaire::allocator* aAllocator) {
+		CURRENT_ALLOCATOR = aAllocator;
+	}
 
-extern "C" solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_allocator() {
-	if(CURRENT_ALLOCATOR == nullptr) CURRENT_ALLOCATOR = solaire_get_default_allocator();
-	return CURRENT_ALLOCATOR;
-}
+	extern "C" SOLAIRE_EXPORT_API solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_allocator() {
+		if(CURRENT_ALLOCATOR == nullptr) CURRENT_ALLOCATOR = solaire_get_default_allocator();
+		return CURRENT_ALLOCATOR;
+	}
 
-extern "C" solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_default_allocator() {
-	static default_allocator DEFAULT_ALLOCATOR;
-	return &DEFAULT_ALLOCATOR;
-}
+	extern "C" SOLAIRE_EXPORT_API solaire::allocator* SOLAIRE_EXPORT_CALL solaire_get_default_allocator() {
+		static default_allocator DEFAULT_ALLOCATOR;
+		return &DEFAULT_ALLOCATOR;
+	}
+#endif
