@@ -37,6 +37,8 @@ namespace solaire { namespace interfaces {
     public:
 		virtual SOLAIRE_INTERFACE_CALL ~istream() throw(){}
 
+		virtual bool SOLAIRE_INTERFACE_CALL at_end() const throw() = 0;
+
 		inline istream& read(void* aAddress, uint32_t aBytes) {
 			runtime_assert(read_bin(aAddress, aBytes), "solaire::interfaces::read : Failed to read bytes");
 			return *this;
@@ -105,6 +107,26 @@ namespace solaire { namespace interfaces {
 		inline istream& operator>>(char* aValue) {
 			runtime_assert(read_string(aValue), "solaire::interfaces::operator>>(char*) : Failed to read value");
 			return *this;
+		}
+
+		void read_until_delimiter(char* aString, uint32_t aMax, const char aDelimiter) {
+			runtime_assert(is_offsetable(), "solaire::interfaces::istream::read_until_delimiter : Cannot read from non-offsetable stream");
+			char c;
+			while(aMax != 0 && ! at_end()) {
+				operator>>(c);
+				if(c == aDelimiter) {
+					set_offset(get_offset() - 1);
+					return;
+				}
+				*aString = c;
+				++aString;
+				--aMax;
+			}
+			throw std::runtime_error("solaire::interfaces::istream::read_until_delimiter : Failed to find delimiter");
+		}
+
+		inline void read_line(char* aString, uint32_t aMax) {
+			read_until_delimiter(aString, aMax, '\n');
 		}
 	};
 }}
