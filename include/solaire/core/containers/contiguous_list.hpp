@@ -43,35 +43,35 @@ namespace solaire {
 		}
 
 		// Inherited from stack
-		bool SOLAIRE_INTERFACE_CALL push_back(const T& aValue) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _push_back(const T& aValue) throw() override {
 			if (!mBasePointer) return nullptr;
 			if (!assert_size(mHeadPosition + 1)) return false;
 			mBasePointer[mHeadPosition++] = aValue;
 			return true;
 		}
 
-		bool SOLAIRE_INTERFACE_CALL pop_back() throw() override {
+		bool SOLAIRE_INTERFACE_CALL _pop_back() throw() override {
 			if (!mBasePointer) return nullptr;
 			if (mHeadPosition == 0) return false;
 			--mHeadPosition;
 		}
 
-		bool SOLAIRE_INTERFACE_CALL clear() throw() override {
+		bool SOLAIRE_INTERFACE_CALL _clear() throw() override {
 			mHeadPosition = 0;
 			return true;
 		}
 
 		// Inherited from deque
-		bool SOLAIRE_INTERFACE_CALL push_front(const T& aValue) throw() override {
-			return insert(0, aValue);
+		bool SOLAIRE_INTERFACE_CALL _push_front(const T& aValue) throw() override {
+			return _insert(0, aValue);
 		}
 
-		bool SOLAIRE_INTERFACE_CALL pop_front() throw() override {
-			return erase(0);
+		bool SOLAIRE_INTERFACE_CALL _pop_front() throw() override {
+			return _erase(0);
 		}
 
 		// Inherited from list
-		bool SOLAIRE_INTERFACE_CALL insert(const uint32_t aIndex, const T& aValue) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _insert(const uint32_t aIndex, const T& aValue) throw() override {
 			if (!mBasePointer) return nullptr;
 			if (aIndex >= mHeadPosition) return false;
 			if (!assert_size(mHeadPosition + 1)) return false;
@@ -81,7 +81,7 @@ namespace solaire {
 			return true;
 		}
 
-		bool SOLAIRE_INTERFACE_CALL erase(const uint32_t aIndex) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _erase(const uint32_t aIndex) throw() override {
 			if (!mBasePointer) return nullptr;
 			if (mHeadPosition == 0) return false;
 			for (uint32_t i = aIndex; i < mHeadPosition; ++i) mBasePointer[i] = mBasePointer[i + 1];
