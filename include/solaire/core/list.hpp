@@ -26,7 +26,7 @@ namespace solaire {
 		}
 
 		virtual interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_list() throw() = 0;
-		virtual const interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_list() const throw() = 0;
+		virtual const interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_const_list() const throw() = 0;
 
 		inline T& insert_before(const uint32_t aIndex, const T& avalue_) {
 			if(! get_list().insert(aIndex, avalue_)) throw std::runtime_error("P12218319::stack::insert_before : Failed to insert item");
@@ -49,12 +49,12 @@ namespace solaire {
 		}
 
 		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
-		    return get_list();
+		    return get_const_list();
 		}
 	};
 
-	template<class T, class CONTAINER>
-	class value_list : public list<T> {
+	template<class CONTAINER>
+	class value_list : public list<typename CONTAINER::type> {
 	private:
 		CONTAINER mContainer;
 	public:
@@ -68,11 +68,11 @@ namespace solaire {
 		}
 
 		// inherited from deque
-		interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_list() throw() override {
+		interfaces::list<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_list() throw() override {
 			return mContainer;
 		}
 
-		const interfaces::list<T>& SOLAIRE_INTERFACE_CALL get_const_list() const throw() override {
+		const interfaces::list<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_list() const throw() override {
 			return mContainer;
 		}
 	};

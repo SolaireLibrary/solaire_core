@@ -41,7 +41,7 @@ namespace solaire {
 	}
 
 	template<class T>
-	using array_list = value_list<T, interfaces::array_list<T>>;
+	using array_list = value_list<interfaces::array_list<T>>;
 }
 
 #endif

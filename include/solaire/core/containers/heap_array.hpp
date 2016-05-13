@@ -92,7 +92,7 @@ namespace solaire {
 	}
 
 	template<class T>
-	using heap_array = value_list<T, interfaces::heap_array<T>>;
+	using heap_array = value_list<interfaces::heap_array<T>>;
 }
 
 #endif

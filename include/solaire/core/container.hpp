@@ -147,8 +147,8 @@ namespace solaire {
 		}
 	};
 
-	template<class T, class CONTAINER>
-	class value_container : public container<T> {
+	template<class CONTAINER>
+	class value_container : public container<typename CONTAINER::type> {
 	private:
 		CONTAINER mContainer;
 	public:
@@ -162,11 +162,11 @@ namespace solaire {
 		}
 
 		// inherited from container
-		interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_container() throw() override {
+		interfaces::container<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_container() throw() override {
 			return mContainer;
 		}
 
-		const interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
+		const interfaces::container<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
 			return mContainer;
 		}
 	};

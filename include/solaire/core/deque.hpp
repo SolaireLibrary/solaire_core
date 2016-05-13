@@ -50,12 +50,12 @@ namespace solaire {
 		}
 
 		const interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
-		    return get_deque();
+		    return get_const_deque();
 		}
 	};
 
-	template<class T, class CONTAINER>
-	class value_deque : public deque<T> {
+	template<class CONTAINER>
+	class value_deque : public deque<typename CONTAINER::type> {
 	private:
 		CONTAINER mContainer;
 	public:
@@ -69,11 +69,11 @@ namespace solaire {
 		}
 
 		// inherited from deque
-		interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_deque() throw() override {
+		interfaces::deque<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_deque() throw() override {
 			return mContainer;
 		}
 
-		const interfaces::deque<T>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
+		const interfaces::deque<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_deque() const throw() override {
 			return mContainer;
 		}
 	};

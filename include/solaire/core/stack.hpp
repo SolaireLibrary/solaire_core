@@ -54,12 +54,12 @@ namespace solaire {
 		}
 
 		const interfaces::container<T>& SOLAIRE_INTERFACE_CALL get_const_container() const throw() override {
-		    return get_stack();
+		    return get_const_stack();
 		}
 	};
 
-	template<class T, class CONTAINER>
-	class value_stack : public stack<T> {
+	template<class CONTAINER>
+	class value_stack : public stack<typename CONTAINER::type> {
 	private:
 		CONTAINER mContainer;
 	public:
@@ -73,11 +73,11 @@ namespace solaire {
 		}
 
 		// inherited from stack
-		interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_stack() throw() override {
+		interfaces::stack<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_stack() throw() override {
 			return mContainer;
 		}
 
-		const interfaces::stack<T>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
+		const interfaces::stack<typename CONTAINER::type>& SOLAIRE_INTERFACE_CALL get_const_stack() const throw() override {
 			return mContainer;
 		}
 	};
