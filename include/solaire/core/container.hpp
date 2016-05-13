@@ -18,22 +18,31 @@
 #include "solaire/core/iterator.hpp"
 
 namespace solaire {
+	SOLAIRE_EXPORT_CLASS generic_container{
+	public:
+		virtual SOLAIRE_INTERFACE_CALL ~generic_container() {
+
+		}
+
+		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
+		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() = 0;
+
+		inline bool empty() const throw() {
+			return size() == 0;
+		}
+	};
+
+
 	template<class T>
-	SOLAIRE_EXPORT_CLASS container {
+	SOLAIRE_EXPORT_CLASS container : public generic_container{
 	protected:
 		virtual T* SOLAIRE_INTERFACE_CALL get(const uint32_t) throw() = 0;
 		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_begin_iterator() throw() = 0;
 		virtual solaire::iterator<T> SOLAIRE_INTERFACE_CALL get_end_iterator() throw() = 0;
 	public:
-		virtual bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() = 0;
-		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
-
 		virtual SOLAIRE_INTERFACE_CALL ~container() {
 
-		}
-
-		inline bool empty() const throw() {
-			return size() == 0;
 		}
 
 		inline iterator<T> begin() throw() {

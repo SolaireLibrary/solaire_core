@@ -98,7 +98,7 @@ namespace solaire {
 
 		}
 
-		// Inherited from container
+		// Inherited from generic_container
 		bool SOLAIRE_INTERFACE_CALL is_contiguous() const throw() override {
 			return true;
 		}
@@ -108,7 +108,6 @@ namespace solaire {
 			return mHeadPosition;
 		}
 
-		// Inherited from stack
 		bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() override {
 			return true;
 		}

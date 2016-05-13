@@ -29,8 +29,6 @@ namespace solaire {
 
 		}
 
-		virtual bool SOLAIRE_INTERFACE_CALL can_invalidate() const throw() = 0;
-
 		inline T& push_back(const T& avalue_) {
 			runtime_assert(_push_back(avalue_), "P12218319::stack::push_back : Failed to push item");
 			return container<T>::back();
