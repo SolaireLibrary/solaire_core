@@ -36,7 +36,7 @@ namespace solaire {
 		local_memory& operator=(const local_memory&);
 	public:
 		local_memory() :
-			mPointer(nullptr),
+			mHeapMemory(nullptr),
 			mBufferAlloc(0),
 			mHeapAlloc(0)
 		{}
@@ -59,14 +59,23 @@ namespace solaire {
 		}
 
 		void deallocate() {
-			runtime_assert(is_allocated(), "Memory has not been allocated");
 			if(mBufferAlloc) {
 				mBufferAlloc = 0;
-			}else {
+			}else if(mHeapAlloc) {
 				get_allocator().deallocate(mHeapMemory);
 				mHeapMemory = nullptr;
 				mHeapAlloc = 0;
+			}else {
+				throw std::runtime_error("Memory has not been allocated");
 			}
+		}
+
+		inline void* get() throw() {
+			return mBufferAlloc ? mBufferMemory : mHeapAlloc ? mHeapMemory : nullptr;
+		}
+
+		inline const void* get() const throw() {
+			return mBufferAlloc ? mBufferMemory : mHeapAlloc ? mHeapMemory : nullptr;
 		}
 	};
 }
