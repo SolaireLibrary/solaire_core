@@ -16,6 +16,7 @@
 //limitations under the License.
 
 #include "solaire/core/interfaces/stream.hpp"
+#include "solaire/core/containers/string.hpp"
 
 namespace solaire { namespace interfaces {
 	SOLAIRE_EXPORT_INTERFACE istream : public stream {
@@ -106,6 +107,12 @@ namespace solaire { namespace interfaces {
 
 		inline istream& operator>>(char* aValue) {
 			runtime_assert(read_string(aValue), "solaire::interfaces::operator>>(char*) : Failed to read value");
+			return *this;
+		}
+
+		inline istream& operator>>(c_string& aValue) {
+			char buf[1024];
+			aValue = buf;
 			return *this;
 		}
 

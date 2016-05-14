@@ -16,6 +16,7 @@
 //limitations under the License.
 
 #include "solaire/core/interfaces/stream.hpp"
+#include "solaire/core/containers/string.hpp"
 
 namespace solaire { namespace interfaces {
 	SOLAIRE_EXPORT_INTERFACE ostream : public stream {
@@ -105,6 +106,10 @@ namespace solaire { namespace interfaces {
 		inline ostream& operator<<(const char* aValue) {
 			runtime_assert(write_string(aValue), "solaire::interfaces::operator<<(const char*) : Failed to write value");
 			return *this;
+		}
+
+		inline ostream& operator<<(const c_string& aValue) {
+			return operator<<(&aValue[0]);
 		}
 	};
 }}
