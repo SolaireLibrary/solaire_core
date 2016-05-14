@@ -150,6 +150,39 @@ namespace solaire {
 			}
 			return j;
 		}
+
+		template<class CONTAINER, const bool DIRECT = false>
+		CONTAINER sub_set(const uint32_t aBegin, const uint32_t aItems) const {
+			CONTAINER tmp;
+			if(DIRECT) {
+				if(is_contiguous()) {
+					const T* const ptr = &operator[](0);
+					if(tmp.is_contiguous()) {
+						T* const ptr2 = &tmp[0];
+						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) ptr2[i] = ptr[i];
+					}else {
+						for (uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp[i] = ptr[i];
+					}
+				}else {
+					if(tmp.is_contiguous()) {
+						T* const ptr2 = &tmp[0];
+						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) ptr2[i] = operator[](i);
+					}else {
+						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp[i] = operator[](i);
+					}
+				}
+			}else {
+				if(is_contiguous()) {
+					const T* const ptr = &operator[](0);
+					for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp.push_back(ptr[i]);
+				}else {
+					for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp.push_back(operator[](i));
+				}
+			}
+		
+			
+			return tmp;
+		}
 	};
 }
 
