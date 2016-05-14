@@ -118,6 +118,33 @@ namespace solaire {
 			mChars.push_back(TERMINATOR);
 		}
 
+		string(const T aValue) :
+			mChars()
+		{
+			mChars.push_back(aValue);
+			mChars.push_back(TERMINATOR);
+		}
+
+		string(const T* aValue) :
+			mChars()
+		{
+			mChars.push_back(TERMINATOR);
+			operator+=(aValue);
+		}
+
+		string<T, TERMINATOR, CONTAINER>& operator=(const T aValue) {
+			mChars.clear();
+			mChars.push_back(aValue);
+			mChars.push_back(TERMINATOR);
+			return *this;
+		}
+
+		string<T, TERMINATOR, CONTAINER>& operator=(const T* aValue) {
+			mChars.clear();
+			mChars.push_back(TERMINATOR);
+			return operator+=(aValue);
+		}
+
 		inline string<T, TERMINATOR, CONTAINER>& operator+=(const T aValue) {
 			push_back(aValue);
 			return *this;
