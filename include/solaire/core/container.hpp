@@ -151,26 +151,33 @@ namespace solaire {
 			return j;
 		}
 
+		template<class C1, class C2, class F>
+		static void dual_for(C1 aContainerA, C2 aContainerB, const uint32_t aBegin, const uint32_t aEnd, const F aFunction) {
+			if(aContainerA.is_contiguous()) {
+				const auto ptr1 = &aContainerA[0];
+				if(aContainerB.is_contiguous()) {
+					const auto ptr2= &aContainerB[0];
+					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr1[i], ptr2[i]);
+				}else {
+					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr1[i], aContainerB[i]);
+				}
+			}else {
+				if(aContainerB.is_contiguous()) {
+					const auto ptr2 = &aContainerB[0];
+					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainerA[i], ptr2[i]);
+				}else {
+					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainerA[i], aContainerB[i]);
+				}
+			}
+		}
+
 		template<class CONTAINER, const bool DIRECT = false>
 		CONTAINER sub_set(const uint32_t aBegin, const uint32_t aItems) const {
 			CONTAINER tmp;
 			if(DIRECT) {
-				if(is_contiguous()) {
-					const T* const ptr = &operator[](0);
-					if(tmp.is_contiguous()) {
-						T* const ptr2 = &tmp[0];
-						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) ptr2[i] = ptr[i];
-					}else {
-						for (uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp[i] = ptr[i];
-					}
-				}else {
-					if(tmp.is_contiguous()) {
-						T* const ptr2 = &tmp[0];
-						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) ptr2[i] = operator[](i);
-					}else {
-						for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp[i] = operator[](i);
-					}
-				}
+				dual_for<CONTAINER&, const container<T>&>(tmp, *this, aBegin, aBegin + aItems, [](T& aLeft, const T& aRight)->void{
+					aLeft = aRight;
+				});
 			}else {
 				if(is_contiguous()) {
 					const T* const ptr = &operator[](0);
