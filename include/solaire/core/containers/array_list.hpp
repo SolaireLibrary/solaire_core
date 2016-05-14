@@ -22,13 +22,13 @@ namespace solaire {
 	template<class T>
 	SOLAIRE_EXPORT_CLASS array_list : public heap_array<T>{
 		// Inherited from heap_array
-		virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+		virtual bool SOLAIRE_INTERFACE_CALL _reserve(const uint32_t aSize) throw() override {
 			if(aSize < mSize) return true;
 			mSize *= 2;
 			T* const tmp = allocate(mSize);
 			if(tmp == nullptr) return false;
 			for(uint32_t i = 0; i < mHeadPosition; ++i) tmp[i] = mBasePointer[i];
-			get_allocator().deallocate(mBasePointer);
+			deallocate(mBasePointer);
 			mBasePointer = tmp;
 			return true;
 		}

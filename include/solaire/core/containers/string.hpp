@@ -41,9 +41,9 @@ namespace solaire {
 		}
 
 		// Inherited from stack
-		bool SOLAIRE_INTERFACE_CALL _push_back(const T& aValue) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _push_back(T&& aValue) throw() override {
 			try {
-				mChars.back() = aValue;
+				mChars.back() = std::move(aValue);
 				mChars.push_back(TERMINATOR);
 				return true;
 			} catch(...){
@@ -71,10 +71,20 @@ namespace solaire {
 			}
 		}
 
-		// Inherited from deque
-		bool SOLAIRE_INTERFACE_CALL _push_front(const T& aValue) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _reserve(const uint32_t aSize) throw() override {
 			try {
-				mChars.push_front(aValue);
+				mChars.reserve(aSize);
+				return true;
+			}
+			catch (...) {
+				return false;
+			}
+		}
+
+		// Inherited from deque
+		bool SOLAIRE_INTERFACE_CALL _push_front(T&& aValue) throw() override {
+			try {
+				mChars.push_front(std::move(aValue));
 				return true;
 			}catch (...) {
 				return false;

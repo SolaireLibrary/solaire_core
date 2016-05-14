@@ -25,7 +25,23 @@ namespace solaire {
 		T* mBasePointer;
 		uint32_t mHeadPosition;
 
-		virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t) throw() = 0;
+		contiguous_list(T* aPointer) :
+			mBasePointer(aPointer),
+			mHeadPosition(0)
+		{}
+
+		contiguous_list(contiguous_list<T>&& aOther) :
+			mBasePointer(aOther.mBasePointer),
+			mHeadPosition(aOther.mHeadPosition)
+		{
+			aOther.mBasePointer = nullptr;
+			aOther.mHeadPosition = 0;
+		}
+
+		contiguous_list<T>& operator=(contiguous_list&& aOther) {
+			std::swap(mBasePointer, aOther.mBasePointer);
+			std::swap(mHeadPosition, aOther.mHeadPosition);
+		}
 
 		// Inherited from container
 		T* SOLAIRE_INTERFACE_CALL get(const uint32_t aIndex) throw() override {
@@ -43,16 +59,16 @@ namespace solaire {
 		}
 
 		// Inherited from stack
-		bool SOLAIRE_INTERFACE_CALL _push_back(const T& aValue) throw() override {
-			if (!mBasePointer) return nullptr;
-			if (!assert_size(mHeadPosition + 1)) return false;
-			mBasePointer[mHeadPosition++] = aValue;
+		bool SOLAIRE_INTERFACE_CALL _push_back(T&& aValue) throw() override {
+			if(! mBasePointer) return nullptr;
+			if(! _reserve(mHeadPosition + 1)) return false;
+			mBasePointer[mHeadPosition++] = std::move(aValue);
 			return true;
 		}
 
 		bool SOLAIRE_INTERFACE_CALL _pop_back() throw() override {
-			if (!mBasePointer) return nullptr;
-			if (mHeadPosition == 0) return false;
+			if(! mBasePointer) return nullptr;
+			if(mHeadPosition == 0) return false;
 			--mHeadPosition;
 			return true;
 		}
@@ -63,8 +79,8 @@ namespace solaire {
 		}
 
 		// Inherited from deque
-		bool SOLAIRE_INTERFACE_CALL _push_front(const T& aValue) throw() override {
-			return mHeadPosition == 0 ? _push_back(aValue) : _insert(0, aValue);
+		bool SOLAIRE_INTERFACE_CALL _push_front(T&& aValue) throw() override {
+			return mHeadPosition == 0 ? _push_back(std::move(aValue)) : _insert(0, std::move(aValue));
 		}
 
 		bool SOLAIRE_INTERFACE_CALL _pop_front() throw() override {
@@ -75,13 +91,13 @@ namespace solaire {
 		bool SOLAIRE_INTERFACE_CALL _insert(const uint32_t aIndex, const T& aValue) throw() override {
 			if(! mBasePointer) return nullptr;
 			if(aIndex != 0) if(aIndex >= mHeadPosition) return false;
-			if(! assert_size(mHeadPosition + 1)) return false;
+			if(! _reserve(mHeadPosition + 1)) return false;
 			const uint32_t offset = mHeadPosition;
 			for(uint32_t i = 0; i <= mHeadPosition; ++i) {
 				const uint32_t j = offset - i;
-				mBasePointer[j] = mBasePointer[j - 1];
+				mBasePointer[j] = std::move(mBasePointer[j - 1]);
 			}
-			mBasePointer[aIndex] = aValue;
+			mBasePointer[aIndex] = std::move(aValue);
 			++mHeadPosition;
 			return true;
 		}
@@ -89,15 +105,11 @@ namespace solaire {
 		bool SOLAIRE_INTERFACE_CALL _erase(const uint32_t aIndex) throw() override {
 			if (!mBasePointer) return nullptr;
 			if (mHeadPosition == 0) return false;
-			for (uint32_t i = aIndex; i < mHeadPosition; ++i) mBasePointer[i] = mBasePointer[i + 1];
+			for (uint32_t i = aIndex; i < mHeadPosition; ++i) mBasePointer[i] = std::move(mBasePointer[i + 1]);
 			--mHeadPosition;
 			return true;
 		}
 	public:
-		contiguous_list(T* aPointer) :
-			mBasePointer(aPointer),
-			mHeadPosition(0)
-		{}
 
 		virtual SOLAIRE_INTERFACE_CALL ~contiguous_list() throw() {
 

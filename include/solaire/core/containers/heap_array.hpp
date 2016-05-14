@@ -31,8 +31,12 @@ namespace solaire {
 			return static_cast<T*>(ptr);
 		}
 
+		inline static void deallocate(const T* const aMemory) {
+			runtime_assert(get_allocator().deallocate(aMemory), "solaire::interfaces::heap_array::deallocate : failed to deallocate memory");
+		}
+
 		// Inherited from ContiguousArray
-			virtual bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+		virtual bool SOLAIRE_INTERFACE_CALL _reserve(const uint32_t aSize) throw() override {
 			return aSize <= mSize;
 		}
 	public:
@@ -44,11 +48,9 @@ namespace solaire {
 		}
 		
 		heap_array(heap_array<T>&& aOther) throw() :
-			contiguous_list(aOther),
+			contiguous_list(std::move(aOther)),
 			mSize(aOther.mSize)
 		{
-			aOther.mBasePointer = nullptr;
-			aOther.mHeadPosition = 0;
 			aOther.mSize = 0;
 		}
 
@@ -62,7 +64,7 @@ namespace solaire {
 	
 		virtual SOLAIRE_INTERFACE_CALL ~heap_array() throw() {
 			if(mBasePointer) {
-				get_allocator().deallocate(mBasePointer);
+				deallocate(mBasePointer);
 				mBasePointer = nullptr;
 			}
 		}

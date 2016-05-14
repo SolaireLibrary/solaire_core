@@ -21,16 +21,20 @@ namespace solaire {
 	template<class T>
 	class deque : public stack<T> {
 	protected:
-		virtual bool SOLAIRE_INTERFACE_CALL _push_front(const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _push_front(T&&) throw() = 0;
 		virtual bool SOLAIRE_INTERFACE_CALL _pop_front() throw() = 0;
 	public:
 		virtual SOLAIRE_INTERFACE_CALL ~deque() {
 
 		}
 
-		inline T& push_front(const T& avalue_) {
-			runtime_assert(_push_front(avalue_), "P12218319::deque::push_front : Failed to push item");
-			return container<T>::front();
+		inline void push_front(T&& aValue) {
+			runtime_assert(_push_front(std::move(aValue)), "P12218319::deque::push_front : Failed to push item");
+		}
+
+		inline void push_front(const T& aValue) {
+			T tmp = aValue;
+			runtime_assert(_push_front(std::move(tmp)), "P12218319::deque::push_front : Failed to push item");
 		}
 
 		inline T pop_front() {
@@ -40,8 +44,12 @@ namespace solaire {
 		}
 
 		inline void push_front(const container<T>& aOther) {
-			const iterator<const T> end = aOther.end();
-			for(iterator<const T> i = aOther.begin(); i != end; ++i) push_front(*i);
+			if (&aOther == this) throw std::runtime_error("P12218319::deque::push_front : Cannot push self");
+			const uint32_t s = size();
+			reserve(s + aOther.size());
+			single_for<const container<T>&>(aOther, 0, s, [this](const T& aValue)->void {
+				push_front(aValue);
+			});
 		}
 	};
 }

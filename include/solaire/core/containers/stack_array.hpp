@@ -25,7 +25,7 @@ namespace solaire {
 		T mArray[S];
 	protected:
 		// Inherited from contiguous_list
-		bool SOLAIRE_INTERFACE_CALL assert_size(const uint32_t aSize) throw() override {
+		bool SOLAIRE_INTERFACE_CALL _reserve(const uint32_t aSize) throw() override {
 			return aSize <= S;
 		}
 	public:

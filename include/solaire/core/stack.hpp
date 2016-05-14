@@ -21,17 +21,22 @@ namespace solaire {
 	template<class T>
 	class stack : public container<T> {
 	protected:
-		virtual bool SOLAIRE_INTERFACE_CALL _push_back(const T&) throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _push_back(T&&) throw() = 0;
 		virtual bool SOLAIRE_INTERFACE_CALL _pop_back() throw() = 0;
 		virtual bool SOLAIRE_INTERFACE_CALL _clear() throw() = 0;
+		virtual bool SOLAIRE_INTERFACE_CALL _reserve(const uint32_t) throw() = 0;
 	public:
 		virtual SOLAIRE_INTERFACE_CALL ~stack() {
 
 		}
 
-		inline T& push_back(const T& avalue_) {
-			runtime_assert(_push_back(avalue_), "P12218319::stack::push_back : Failed to push item");
-			return container<T>::back();
+		inline void push_back(T&& aValue) {
+			runtime_assert(_push_back(std::move(aValue)), "P12218319::stack::push_back : Failed to push item");
+		}
+
+		inline void push_back(const T& aValue) {
+			T tmp = aValue;
+			runtime_assert(_push_back(std::move(tmp)), "P12218319::stack::push_back : Failed to push item");
 		}
 
 		inline T pop_back() {
@@ -41,12 +46,32 @@ namespace solaire {
 		}
 
 		inline void push_back(const container<T>& aOther) {
-			const iterator<const T> end = aOther.end();
-			for(iterator<const T> i = aOther.begin(); i != end; ++i) push_back(*i);
+			if(&aOther == this) throw std::runtime_error("P12218319::stack::push_back : Cannot push self");
+			const uint32_t s = size();
+			reserve(s + aOther.size());
+			single_for<const container<T>&>(aOther, 0, s, [this](const T& aValue)->void {
+				push_back(aValue);
+			});
 		}
 
-		inline void clear() throw() {
+		inline void clear(){
 			runtime_assert(_clear(), "P12218319::stack::clear : Failed to clear");
+		}
+
+		inline void reserve(const uint32_t aSize) {
+			runtime_assert(_reserve(aSize), "P12218319::stack::reserve : Failed to reserve");
+		}
+
+		stack<T>& operator=(container<T>&& aOther) {
+			clear();
+			push_back(aOther);
+			return *this;
+		}
+
+		stack& operator=(const container<T>& aOther) {
+			clear();
+			push_back(aOther);
+			return *this;
 		}
 	};
 }
