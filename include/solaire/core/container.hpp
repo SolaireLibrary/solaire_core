@@ -151,6 +151,16 @@ namespace solaire {
 			return j;
 		}
 
+		template<class C1, class F>
+		static void single_for(C1 aContainer, const uint32_t aBegin, const uint32_t aEnd, const F aFunction) {
+			if(aContainer.is_contiguous()) {
+				const auto ptr = &aContainer[0];
+				for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr[i]);
+			}else {
+				for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainer[i]);
+			}
+		}
+
 		template<class C1, class C2, class F>
 		static void dual_for(C1 aContainerA, C2 aContainerB, const uint32_t aBegin, const uint32_t aEnd, const F aFunction) {
 			if(aContainerA.is_contiguous()) {
@@ -179,12 +189,9 @@ namespace solaire {
 					aLeft = aRight;
 				});
 			}else {
-				if(is_contiguous()) {
-					const T* const ptr = &operator[](0);
-					for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp.push_back(ptr[i]);
-				}else {
-					for(uint32_t i = aBegin; i < aBegin + aItems; ++i) tmp.push_back(operator[](i));
-				}
+				single_for<const container<T>&>(*this, aBegin, aBegin + aItems, [&tmp](const T& aValue)->void {
+					tmp.push_back(aValue);
+				});
 			}
 		
 			
