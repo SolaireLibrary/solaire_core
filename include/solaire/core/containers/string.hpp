@@ -123,7 +123,7 @@ namespace solaire {
 			return *this;
 		}
 
-		inline string<T, TERMINATOR, CONTAINER>& operator+=(const T* aValue) {
+		string<T, TERMINATOR, CONTAINER>& operator+=(const T* aValue) {
 			while(*aValue != TERMINATOR) {
 				push_back(*aValue);
 				++aValue;
@@ -135,6 +135,36 @@ namespace solaire {
 		inline string<T, TERMINATOR, CONTAINER>& operator+=(const string<T, TERMINATOR2, CONTAINER2>& aOther) {
 			push_back(aOther);
 			return *this;
+		}
+
+		inline bool operator==(const T aValue) const {
+			if(size() != 1) return false;
+			return back() == aValue;
+		}
+
+		bool operator==(const T* aValue) const {
+			const uint32_t size = size();
+			if(mChars.is_contiguous()) {
+				const T* const tmp = &mChars[0];
+				for(uint32_t i = 0; i < size; ++i, ++aValue) {
+					if(*aValue == TERMINATOR) return false;
+					if(tmp[i] != aValue) return false;
+				}
+			}else {
+				for(uint32_t i = 0; i < size; ++i, ++aValue) {
+					if(*aValue == TERMINATOR) return false;
+					if(mChars[i] != aValue) return false;
+				}
+			}
+			return true;
+		}
+
+		inline bool operator!=(const T aValue) const {
+			return ! operator==(aValue);
+		}
+
+		inline bool operator!=(const T* aValue) const {
+			return ! operator==(aValue);
 		}
 
 		// Inherited from generic_container
