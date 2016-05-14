@@ -132,6 +132,10 @@ namespace solaire {
 			operator+=(aValue);
 		}
 
+		SOLAIRE_INTERFACE_CALL ~string() {
+
+		}
+
 		string<T, TERMINATOR, CONTAINER>& operator=(const T aValue) {
 			mChars.clear();
 			mChars.push_back(aValue);

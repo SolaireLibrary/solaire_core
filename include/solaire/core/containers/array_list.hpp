@@ -56,6 +56,10 @@ namespace solaire {
 		{
 			mHeadPosition = 0;
 		}
+
+		SOLAIRE_INTERFACE_CALL ~array_list() {
+
+		}
 	};
 }
 

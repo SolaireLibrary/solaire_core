@@ -112,6 +112,7 @@ namespace solaire { namespace interfaces {
 
 		inline istream& operator>>(c_string& aValue) {
 			char buf[1024];
+			operator>>(buf);
 			aValue = buf;
 			return *this;
 		}
