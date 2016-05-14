@@ -80,7 +80,7 @@ namespace solaire {
 					get_allocator().deallocate(mBasePointer);
 					mBasePointer = nullptr;
 				}
-				mBasePointer = allocator(aOther.mSize);
+				mBasePointer = allocate(aOther.mSize);
 				mSize = aOther.mSize;
 			}
 			mHeadPosition = aOther.mHeadPosition;

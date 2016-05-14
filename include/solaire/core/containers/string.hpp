@@ -143,17 +143,17 @@ namespace solaire {
 		}
 
 		bool operator==(const T* aValue) const {
-			const uint32_t size = size();
+			const uint32_t size = mChars.size() - 1;
 			if(mChars.is_contiguous()) {
 				const T* const tmp = &mChars[0];
 				for(uint32_t i = 0; i < size; ++i, ++aValue) {
 					if(*aValue == TERMINATOR) return false;
-					if(tmp[i] != aValue) return false;
+					if(tmp[i] != *aValue) return false;
 				}
 			}else {
 				for(uint32_t i = 0; i < size; ++i, ++aValue) {
 					if(*aValue == TERMINATOR) return false;
-					if(mChars[i] != aValue) return false;
+					if(mChars[i] != *aValue) return false;
 				}
 			}
 			return true;
