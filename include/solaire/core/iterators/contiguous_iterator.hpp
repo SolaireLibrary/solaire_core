@@ -53,6 +53,10 @@ namespace solaire { namespace interfaces {
 		int32_t SOLAIRE_INTERFACE_CALL get_offset() const throw() override {
 			return mOffset;
 		}
+
+		uint32_t SOLAIRE_INTERFACE_CALL size() const throw() override {
+			return sizeof(contiguous_iterator<T>);
+		}
 	};
 
 	template<class T>
@@ -80,11 +84,15 @@ namespace solaire { namespace interfaces {
 		}
 
 		void SOLAIRE_INTERFACE_CALL copy(interfaces::iterator<T>* const aOther) const throw() override {
-			new(aOther) contiguous_iterator<T>(mPointer, mOffset);
+			new(aOther) reverse_contiguous_iterator<T>(mPointer, mOffset);
 		}
 
 		int32_t SOLAIRE_INTERFACE_CALL get_offset() const throw() override {
 			return mOffset;
+		}
+
+		uint32_t SOLAIRE_INTERFACE_CALL size() const throw() override {
+			return sizeof(reverse_contiguous_iterator<T>);
 		}
 	};
 }}

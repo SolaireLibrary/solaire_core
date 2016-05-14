@@ -29,10 +29,7 @@ namespace solaire { namespace interfaces {
 		virtual void SOLAIRE_INTERFACE_CALL decrement(const uint32_t) throw() = 0;
 		virtual void SOLAIRE_INTERFACE_CALL copy(iterator<T>* const) const throw() = 0;
 		virtual int32_t SOLAIRE_INTERFACE_CALL get_offset() const throw() = 0;
-	};
-
-	enum {
-		MAX_INTERFACES_ITERATOR_SIZE = (SOLAIRE_WORD_SIZE / 2) - 1
+		virtual uint32_t SOLAIRE_INTERFACE_CALL size() const throw() = 0;
 	};
 }}
 

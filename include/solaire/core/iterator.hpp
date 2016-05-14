@@ -17,79 +17,83 @@
 
 
 #include "solaire/core/interfaces/iterator.hpp"
+#include "solaire/core/local_memory.hpp"
 
 namespace solaire {
 
-	//! \todo Call destructor on interfaces::iterator
-
 	template<class T>
 	class iterator {
-	//public:
+	public:
 		typedef T Type;
 	private:
-		uint8_t mImplementation[interfaces::MAX_INTERFACES_ITERATOR_SIZE];
-		bool mCreated;
+		local_memory<(SOLAIRE_WORD_SIZE / 2) - 1> mMemory;
 	private:
-		inline interfaces::iterator<T>* get_iterator_ptr() {
-			return reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
-		}
-
-		inline const interfaces::iterator<T>* get_iterator_ptr() const {
-			return reinterpret_cast<const interfaces::iterator<T>*>(mImplementation);
-		}
-
-	    inline interfaces::iterator<T>& get_iterator() {
-			runtime_assert(mCreated, "Iterator implementation is null");
-			return *get_iterator_ptr();
+		inline interfaces::iterator<T>& get_iterator() {
+			interfaces::iterator<T>* const tmp = static_cast<interfaces::iterator<T>*>(mMemory.get());
+			runtime_assert(tmp, "Iterator implementation is null");
+			return *tmp;
 	    }
 
 		inline const interfaces::iterator<T>& get_iterator() const {
-			runtime_assert(mCreated, "Iterator implementation is null");
-			return *get_iterator_ptr();
+			const interfaces::iterator<T>* const tmp = static_cast<const interfaces::iterator<T>*>(mMemory.get());
+			runtime_assert(tmp, "Iterator implementation is null");
+			return *tmp;
 	    }
+
+		inline void _delete() {
+			if(mMemory.is_allocated()) {
+				get_iterator().~iterator();
+				mMemory.deallocate();
+			}
+		}
+
+		inline void _create(const interfaces::iterator<T>& aIterator) {
+			interfaces::iterator<T>* const ptr = static_cast<interfaces::iterator<T>*>(mMemory.allocate(aIterator.size()));
+			aIterator.copy(ptr);
+		}
+
+		inline void _create(const iterator<T>& aOther) {
+			if(aOther.mMemory.is_allocated()) {
+				_create(aOther.get_iterator());
+			}
+		}
 	public:
 
 		iterator() :
-			mCreated(false)
+			mMemory()
 		{}
 
 		iterator(iterator<T>&& aOther) :
-			mCreated(false)
+			mMemory()
 		{
-			if(aOther.mCreated) {
-				aOther.get_iterator().copy(get_iterator_ptr());
-				mCreated = true;
-			}
+			_create(aOther);
 		}
 
 		iterator(const iterator<T>& aOther) :
-			mCreated(false)
+			mMemory()
 		{
-			if(aOther.mCreated) {
-				aOther.get_iterator().copy(get_iterator_ptr());
-				mCreated = true;
-			}
+			_create(aOther);
 		}
 
-		iterator(const interfaces::iterator<T>& aiterator) :
-            mCreated(true)
+		iterator(const interfaces::iterator<T>& aIterator) :
+			mMemory()
         {
-            aiterator.copy(get_iterator_ptr());
+			_create(aIterator);
         }
 
 		~iterator() {
-			if(mCreated) get_iterator().~iterator();
+			_delete();
 		}
 
 		inline iterator<T>& operator=(iterator<T>&& aOther) {
-			if(mCreated) get_iterator().~iterator();
-			if(aOther.mCreated) aOther.get_iterator().copy(get_iterator_ptr());
+			_delete();
+			_create(aOther);
 			return *this;
 		}
 
 		inline iterator<T>& operator=(const iterator<T>& aOther) {
-			if(mCreated) get_iterator().~iterator();
-			if(aOther.mCreated) aOther.get_iterator().copy(get_iterator_ptr());
+			_delete();
+			_create(aOther);
 			return *this;
 		}
 
