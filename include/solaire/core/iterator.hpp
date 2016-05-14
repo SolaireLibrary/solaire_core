@@ -24,75 +24,41 @@ namespace solaire {
 
 	template<class T>
 	class iterator {
-	public:
+	//public:
 		typedef T Type;
 	private:
 		uint8_t mImplementation[interfaces::MAX_INTERFACES_ITERATOR_SIZE];
 		bool mCreated;
 	private:
-	    SOLAIRE_FORCE_INLINE interfaces::iterator<T>& get_iterator() {
-			if(! mCreated) throw std::runtime_error("P12218319::iterator::get_iterator : Cannot dereference null interfaces::iterator");
-			return *reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
+		inline interfaces::iterator<T>* get_iterator_ptr() {
+			return reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
+		}
+
+		inline const interfaces::iterator<T>* get_iterator_ptr() const {
+			return reinterpret_cast<const interfaces::iterator<T>*>(mImplementation);
+		}
+
+	    inline interfaces::iterator<T>& get_iterator() {
+			runtime_assert(mCreated, "Iterator implementation is null");
+			return *get_iterator_ptr();
 	    }
 
-	    SOLAIRE_FORCE_INLINE const interfaces::iterator<T>& get_iterator() const {
-			if(! mCreated) throw std::runtime_error("P12218319::iterator::get_iterator : Cannot dereference null interfaces::iterator");
-			return *reinterpret_cast<const interfaces::iterator<T>*>(mImplementation);
+		inline const interfaces::iterator<T>& get_iterator() const {
+			runtime_assert(mCreated, "Iterator implementation is null");
+			return *get_iterator_ptr();
 	    }
-
-		inline const T* dereference() const {
-			const T* const tmp = get_iterator().dereference();
-			if(tmp == nullptr) throw std::runtime_error("P12218319::iterator::dereference : Out of bounds");
-			return tmp;
-		}
-
-		inline void increment(const uint32_t aOffset) throw() {
-			if(mCreated) {
-				get_iterator().increment(aOffset);
-			}else {
-				int32_t& offset = *reinterpret_cast<int32_t*>(mImplementation);
-				offset += aOffset;
-			}
-		}
-
-		inline void decrement(const uint32_t aOffset) throw() {
-			if(mCreated) {
-				get_iterator().decrement(aOffset);
-			}else {
-				int32_t& offset = *reinterpret_cast<int32_t*>(mImplementation);
-				offset -= aOffset;
-			}
-		}
-
-		inline void copy(interfaces::iterator<T>* const aPointer) const {
-			if(! mCreated) throw std::runtime_error("P12218319::iterator::copy : Cannot copy null interfaces::iterator");
-			return get_iterator().copy(aPointer);
-		}
-
-		inline int32_t get_offset() const {
-			if(mCreated) {
-				return get_iterator().get_offset();
-			}else {
-				return *reinterpret_cast<const int32_t*>(mImplementation);
-			}
-		}
 	public:
 
 		iterator() :
 			mCreated(false)
-		{
-			*reinterpret_cast<int32_t*>(mImplementation) = 0;
-		}
+		{}
 
 		iterator(iterator<T>&& aOther) :
 			mCreated(false)
 		{
 			if(aOther.mCreated) {
-				aOther.copy(&get_iterator());
+				aOther.get_iterator().copy(get_iterator_ptr());
 				mCreated = true;
-			}else {
-				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
-				mCreated = false;
 			}
 		}
 
@@ -100,18 +66,15 @@ namespace solaire {
 			mCreated(false)
 		{
 			if(aOther.mCreated) {
-				aOther.copy(&get_iterator());
+				aOther.get_iterator().copy(get_iterator_ptr());
 				mCreated = true;
-			}else {
-				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
-				mCreated = false;
 			}
 		}
 
 		iterator(const interfaces::iterator<T>& aiterator) :
             mCreated(true)
         {
-            aiterator.copy(&get_iterator());
+            aiterator.copy(get_iterator_ptr());
         }
 
 		~iterator() {
@@ -119,143 +82,128 @@ namespace solaire {
 		}
 
 		inline iterator<T>& operator=(iterator<T>&& aOther) {
-			interfaces::iterator<T>* const iterator = reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
-			if(mCreated) iterator->~iterator();
-			if(aOther.mCreated) {
-				aOther.copy(iterator);
-				mCreated = true;
-			}else {
-				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
-				mCreated = false;
-			}
+			if(mCreated) get_iterator().~iterator();
+			if(aOther.mCreated) aOther.get_iterator().copy(get_iterator_ptr());
 			return *this;
 		}
 
 		inline iterator<T>& operator=(const iterator<T>& aOther) {
-			interfaces::iterator<T>* const iterator = reinterpret_cast<interfaces::iterator<T>*>(mImplementation);
-			if(mCreated) iterator->~iterator();
-			if(aOther.mCreated) {
-				aOther.copy(iterator);
-				mCreated = true;
-			}else {
-				*reinterpret_cast<int32_t*>(mImplementation) = *reinterpret_cast<const int32_t*>(aOther.mImplementation);
-				mCreated = false;
-			}
+			if(mCreated) get_iterator().~iterator();
+			if(aOther.mCreated) aOther.get_iterator().copy(get_iterator_ptr());
 			return *this;
 		}
 
-		/*template<typename ENABLE = typename std::enable_if<! std::is_same<T, const T>::value>::type>
-		operator iterator<const T>() const{
+		inline operator iterator<const T>() const {
 			iterator<T> tmp = *this;
 			return *reinterpret_cast<iterator<const T>*>(&tmp);
-		}*/
+		}
 
 		// Comparison
 
 		inline bool operator==(const iterator<T>& aOther) const {
-			return get_offset() == aOther.get_offset();
+			return get_iterator().get_offset() == aOther.get_iterator().get_offset();
 		}
 
 		inline bool operator!=(const iterator<T>& aOther) const {
-			return get_offset() != aOther.get_offset();
+			return get_iterator().get_offset() != aOther.get_iterator().get_offset();
 		}
 
 		inline bool operator<(const iterator<T>& aOther) const {
-			return get_offset() < aOther.get_offset();
+			return get_iterator().get_offset() < aOther.get_iterator().get_offset();
 		}
 
 		inline bool operator>(const iterator<T>& aOther) const {
-			return get_offset() > aOther.get_offset();
+			return get_iterator().get_offset() > aOther.get_iterator().get_offset();
 		}
 
 		inline bool operator<=(const iterator<T>& aOther) const {
-			return get_offset() <= aOther.get_offset();
+			return get_iterator().get_offset() <= aOther.get_iterator().get_offset();
 		}
 
 		inline bool operator>=(const iterator<T>& aOther) const {
-			return get_offset() >= aOther.get_offset();
+			return get_iterator().get_offset() >= aOther.get_iterator().get_offset();
 		}
 
 		// Dereference
 
 		inline T& operator*() {
-			return *const_cast<T*>(dereference());
+			return *const_cast<T*>(get_iterator().dereference());
 		}
 
 		inline const T& operator*() const {
-			return *dereference();
+			return *get_iterator().dereference();
 		}
 
 		inline T* operator->() {
-			return const_cast<T*>(dereference());
+			return const_cast<T*>(get_iterator().dereference());
 		}
 
 		inline const T* operator->() const {
-			return dereference();
+			return get_iterator().dereference();
 		}
 
 		inline T& operator[](const uint32_t aIndex) {
 			iterator<T> tmp(*this);
 			tmp.increment(aIndex);
-			return const_cast<T&>(tmp.dereference());
+			return const_cast<T&>(tmp.get_iterator().dereference());
 		}
 
 		inline const T& operator[](const uint32_t aIndex) const {
 			iterator<T> tmp(*this);
 			tmp.increment(aIndex);
-			return tmp.dereference();
+			return tmp.get_iterator().dereference();
 		}
 
 		// Increment
 
 		inline iterator<T>& operator++() {
-			increment(1);
+			get_iterator().increment(1);
 			return *this;
 		}
 
 		inline iterator<T> operator++(int) {
 			iterator<T> tmp(*this);
-			increment(1);
+			get_iterator().increment(1);
 			return tmp;
 		}
 
 		inline iterator<T>& operator+=(const uint32_t aOffset) {
-			increment(aOffset);
+			get_iterator().increment(aOffset);
 			return *this;
 		}
 
 		inline iterator<T> operator+(const uint32_t aOffset) const {
 			iterator<T> tmp(*this);
-			tmp.increment(aOffset);
+			tmp.get_iterator().increment(aOffset);
 			return tmp;
 		}
 
 		// Decrement
 
 		inline iterator<T>& operator--() {
-			decrement(1);
+			get_iterator().decrement(1);
 			return *this;
 		}
 
 		inline iterator<T> operator--(int) {
 			iterator<T> tmp(*this);
-			decrement(1);
+			get_iterator().decrement(1);
 			return tmp;
 		}
 
 		inline iterator<T>& operator-=(const uint32_t aOffset) {
-			decrement(aOffset);
+			get_iterator().decrement(aOffset);
 			return *this;
 		}
 
 		inline iterator<T> operator-(const uint32_t aOffset) const {
 			iterator<T> tmp(*this);
-			tmp.decrement(aOffset);
+			tmp.get_iterator().decrement(aOffset);
 			return tmp;
 		}
 
 		inline int32_t operator-(const iterator<T>& aOther) const {
-			return get_offset() - aOther.get_offset();
+			return get_iterator().get_offset() - aOther.get_iterator().get_offset();
 		}
 	};
 }

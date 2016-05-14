@@ -50,7 +50,7 @@ namespace solaire {
 		}
 
 		inline iterator<const T> begin() const throw() {
-			return get_begin_iterator();
+			return const_cast<container<T>*>(this)->get_begin_iterator();
 		}
 
 		inline iterator<T> end() throw() {
@@ -58,7 +58,7 @@ namespace solaire {
 		}
 
 		inline iterator<const T> end() const throw() {
-			return get_end_iterator();
+			return const_cast<container<T>*>(this)->get_end_iterator();
 		}
 
 		T& operator[](const uint32_t aIndex) {
@@ -157,7 +157,9 @@ namespace solaire {
 				const auto ptr = &aContainer[0];
 				for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr[i]);
 			}else {
-				for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainer[i]);
+				auto begin = aContainer.begin() + aBegin;
+				const auto end = begin + aEnd;
+				for(begin; begin != end; ++begin) aFunction(*begin);
 			}
 		}
 
@@ -169,14 +171,17 @@ namespace solaire {
 					const auto ptr2= &aContainerB[0];
 					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr1[i], ptr2[i]);
 				}else {
-					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr1[i], aContainerB[i]);
+					auto itB = aContainerB.begin() + aBegin;
+					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(ptr1[i], *itB);
 				}
 			}else {
+				auto itA = aContainerA.begin() + aBegin;
 				if(aContainerB.is_contiguous()) {
 					const auto ptr2 = &aContainerB[0];
-					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainerA[i], ptr2[i]);
+					for(uint32_t i = aBegin; i < aEnd; ++i, ++itA) aFunction(*itA, ptr2[i]);
 				}else {
-					for(uint32_t i = aBegin; i < aEnd; ++i) aFunction(aContainerA[i], aContainerB[i]);
+					auto itB = aContainerB.begin() + aBegin;
+					for (uint32_t i = aBegin; i < aEnd; ++i, ++itA, ++itB) aFunction(*itA, *itB);
 				}
 			}
 		}
