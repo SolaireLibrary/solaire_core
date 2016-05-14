@@ -29,7 +29,7 @@ namespace solaire {
 		}
 
 		inline T& insert_before(const uint32_t aIndex, const T& aValue) {
-			runtime_assert(_insert(aIndex, avalue_), "P12218319::stack::insert_before : Failed to insert item");
+			runtime_assert(_insert(aIndex, aValue), "P12218319::stack::insert_before : Failed to insert item");
 			return container<T>::operator[](aIndex);
 		}
 

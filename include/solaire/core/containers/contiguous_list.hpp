@@ -54,6 +54,7 @@ namespace solaire {
 			if (!mBasePointer) return nullptr;
 			if (mHeadPosition == 0) return false;
 			--mHeadPosition;
+			return true;
 		}
 
 		bool SOLAIRE_INTERFACE_CALL _clear() throw() override {
